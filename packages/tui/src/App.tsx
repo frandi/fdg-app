@@ -5,7 +5,7 @@ import { SessionOrchestrator, EngineEventBus } from '@fdg/engine';
 import type { Database } from '@fdg/db';
 import { ConfigScreen } from './screens/ConfigScreen.js';
 import { DiscussionScreen } from './screens/DiscussionScreen.js';
-import { SummaryView } from './components/SummaryView.js';
+import { SummaryScreen } from './screens/SummaryScreen.js';
 
 type AppPhase = 'config' | 'discussion' | 'summary';
 
@@ -69,14 +69,14 @@ export function App({ db, availableParticipants }: AppProps) {
     );
   }
 
-  if (phase === 'summary' && summary) {
+  if (phase === 'summary' && summary && config && orchestrator) {
     return (
-      <Box flexDirection="column">
-        <SummaryView summary={summary} />
-        <Box paddingX={1} marginTop={1}>
-          <Text color="gray">Session complete. Press Ctrl+C to exit.</Text>
-        </Box>
-      </Box>
+      <SummaryScreen
+        db={db}
+        sessionId={orchestrator.getSessionId()}
+        config={config}
+        summary={summary}
+      />
     );
   }
 
