@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+*.tsbuildinfo
+
+# Native build artifacts
+build/
+
+# Claude Code local settings
+.claude/settings.local.json
