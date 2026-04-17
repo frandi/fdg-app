@@ -7,3 +7,5 @@ export { BidRepository } from './repositories/bid.repo.js';
 export type { BidRow } from './repositories/bid.repo.js';
 export { WhisperRepository } from './repositories/whisper.repo.js';
 export { SummaryReportRepository } from './repositories/summary-report.repo.js';
+export { SessionEventsRepository } from './repositories/session-events.repo.js';
+export type { SessionEventRow } from './repositories/session-events.repo.js';

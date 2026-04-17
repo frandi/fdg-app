@@ -1,5 +1,8 @@
 export { SessionOrchestrator } from './orchestrator.js';
 export { EngineEventBus } from './event-bus.js';
+export type { EnginePersister } from './event-bus.js';
+export { SessionReplayer } from './session-replayer.js';
+export type { ReplayerOptions } from './session-replayer.js';
 export { HostAgent } from './agents/host-agent.js';
 export type { CheckpointResult, TurnInfo } from './agents/host-agent.js';
 export { ParticipantAgent } from './agents/participant-agent.js';

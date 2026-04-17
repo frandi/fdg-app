@@ -6,9 +6,10 @@ import type { Database } from '@fdg/db';
 import { ConfigScreen } from './screens/ConfigScreen.js';
 import { DiscussionScreen } from './screens/DiscussionScreen.js';
 import { SummaryScreen } from './screens/SummaryScreen.js';
+import { ReplayScreen } from './screens/ReplayScreen.js';
 import { useTerminalDimensions } from './hooks/useTerminalDimensions.js';
 
-type AppPhase = 'config' | 'discussion' | 'summary';
+type AppPhase = 'config' | 'discussion' | 'summary' | 'replay';
 
 interface AppProps {
   db: Database;
@@ -42,9 +43,20 @@ export function App({ db, availableParticipants }: AppProps) {
     [db],
   );
 
-  const handleComplete = useCallback((sessionSummary: SessionSummary) => {
+  const handleSessionCompleted = useCallback((sessionSummary: SessionSummary) => {
     setSummary(sessionSummary);
+  }, []);
+
+  const handleRequestSummary = useCallback(() => {
     setPhase('summary');
+  }, []);
+
+  const handleRequestReplay = useCallback(() => {
+    setPhase('replay');
+  }, []);
+
+  const handleBackToDiscussion = useCallback(() => {
+    setPhase('discussion');
   }, []);
 
   const renderPhase = () => {
@@ -71,7 +83,12 @@ export function App({ db, availableParticipants }: AppProps) {
           eventBus={eventBus}
           participants={config.participants}
           turnLimit={config.turnLimit}
-          onComplete={handleComplete}
+          db={db}
+          sessionId={orchestrator.getSessionId()}
+          concludedSummary={summary}
+          onSessionCompleted={handleSessionCompleted}
+          onRequestSummary={handleRequestSummary}
+          onRequestReplay={handleRequestReplay}
         />
       );
     }
@@ -83,6 +100,19 @@ export function App({ db, availableParticipants }: AppProps) {
           sessionId={orchestrator.getSessionId()}
           config={config}
           summary={summary}
+          onBack={handleBackToDiscussion}
+        />
+      );
+    }
+
+    if (phase === 'replay' && config && orchestrator) {
+      return (
+        <ReplayScreen
+          db={db}
+          sessionId={orchestrator.getSessionId()}
+          participants={config.participants}
+          turnLimit={config.turnLimit}
+          onExit={handleBackToDiscussion}
         />
       );
     }

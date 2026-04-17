@@ -1,11 +1,13 @@
 import BetterSqlite3 from 'better-sqlite3';
 import { migrate001 } from './migrations/001-initial.js';
+import { migrate002 } from './migrations/002-session-events.js';
 import { ParticipantPoolRepository } from './repositories/participant-pool.repo.js';
 import { SessionRepository } from './repositories/session.repo.js';
 import { UtteranceRepository } from './repositories/utterance.repo.js';
 import { BidRepository } from './repositories/bid.repo.js';
 import { WhisperRepository } from './repositories/whisper.repo.js';
 import { SummaryReportRepository } from './repositories/summary-report.repo.js';
+import { SessionEventsRepository } from './repositories/session-events.repo.js';
 
 export class Database {
   private db: BetterSqlite3.Database;
@@ -16,6 +18,7 @@ export class Database {
   readonly bids: BidRepository;
   readonly whispers: WhisperRepository;
   readonly summaryReports: SummaryReportRepository;
+  readonly sessionEvents: SessionEventsRepository;
 
   constructor(dbPath: string) {
     this.db = new BetterSqlite3(dbPath);
@@ -30,10 +33,12 @@ export class Database {
     this.bids = new BidRepository(this.db);
     this.whispers = new WhisperRepository(this.db);
     this.summaryReports = new SummaryReportRepository(this.db);
+    this.sessionEvents = new SessionEventsRepository(this.db);
   }
 
   private runMigrations(): void {
     migrate001(this.db);
+    migrate002(this.db);
   }
 
   close(): void {
