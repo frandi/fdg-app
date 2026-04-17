@@ -67,10 +67,16 @@ if (participants.length === 0) {
   participants = db.participants.getAll();
 }
 
+const initialCompletedSessions = db.sessions.listCompletedWithSummary();
+
 enterFullscreen();
 
 const { waitUntilExit } = render(
-  <App db={db} availableParticipants={participants} />,
+  <App
+    db={db}
+    availableParticipants={participants}
+    initialCompletedSessions={initialCompletedSessions}
+  />,
 );
 
 waitUntilExit().then(() => {

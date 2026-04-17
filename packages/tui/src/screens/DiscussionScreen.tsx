@@ -17,17 +17,19 @@ import { TurnLimitPrompt } from '../components/TurnLimitPrompt.js';
 import { ConcludedBanner } from '../components/ConcludedBanner.js';
 
 interface DiscussionScreenProps {
-  orchestrator: SessionOrchestrator;
-  eventBus: EngineEventBus;
+  orchestrator: SessionOrchestrator | null;
+  eventBus: EngineEventBus | null;
   participants: ParticipantDefinition[];
   turnLimit: number;
   db: Database;
   sessionId: string;
   concludedSummary: SessionSummary | null;
-  onSessionCompleted: (summary: SessionSummary) => void;
+  readOnly?: boolean;
+  onSessionCompleted?: (summary: SessionSummary) => void;
   onRequestSummary: () => void;
   onRequestReplay: () => void;
   onRequestUsage: () => void;
+  onExit?: () => void;
 }
 
 export function DiscussionScreen({
@@ -38,10 +40,12 @@ export function DiscussionScreen({
   db,
   sessionId,
   concludedSummary,
+  readOnly = false,
   onSessionCompleted,
   onRequestSummary,
   onRequestReplay,
   onRequestUsage,
+  onExit,
 }: DiscussionScreenProps) {
   const engine = useEngine(eventBus, turnLimit);
   const participantNames = new Map(participants.map((p) => [p.id, p.name]));
@@ -58,7 +62,7 @@ export function DiscussionScreen({
     }
   }, [concludedSummary, engine.transcript.length, hydrated, db, sessionId]);
 
-  const concluded = engine.summary !== null || concludedSummary !== null;
+  const concluded = readOnly || engine.summary !== null || concludedSummary !== null;
   const displayedTranscript =
     engine.transcript.length > 0 ? engine.transcript : hydrated ?? [];
   const isBidding =
@@ -68,16 +72,17 @@ export function DiscussionScreen({
 
   React.useEffect(() => {
     if (engine.summary) {
-      onSessionCompleted(engine.summary);
+      onSessionCompleted?.(engine.summary);
     }
   }, [engine.summary, onSessionCompleted]);
 
   useInput(
-    (input) => {
+    (input, key) => {
       if (!concluded) return;
       if (input === 's') onRequestSummary();
       else if (input === 'r') onRequestReplay();
       else if (input === 'u') onRequestUsage();
+      else if (key.escape) onExit?.();
     },
     { isActive: concluded },
   );
@@ -125,7 +130,7 @@ export function DiscussionScreen({
             currentTurn={engine.currentTurn}
             turnLimit={engine.turnLimit}
             onRespond={(action, extraTurns) => {
-              orchestrator.respondToTurnLimit(action, extraTurns);
+              orchestrator?.respondToTurnLimit(action, extraTurns);
             }}
           />
         )}
@@ -134,7 +139,7 @@ export function DiscussionScreen({
           <ConcludedBanner />
         ) : (
           <WhisperInput
-            onSubmit={(message) => orchestrator.submitWhisper(message)}
+            onSubmit={(message) => orchestrator?.submitWhisper(message)}
             acknowledged={engine.whisperAcknowledged}
           />
         )}
