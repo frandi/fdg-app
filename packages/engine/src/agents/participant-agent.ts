@@ -41,6 +41,10 @@ export class ParticipantAgent {
       userPrompt,
       temperature: 0.7,
       maxTokens: 400,
+      metadata: {
+        actor: `participant:${this.definition.id}`,
+        callType: 'opening',
+      },
     });
   }
 
@@ -57,6 +61,10 @@ export class ParticipantAgent {
       schema: bidSchema,
       temperature: 0.3,
       maxTokens: 150,
+      metadata: {
+        actor: `participant:${this.definition.id}`,
+        callType: 'bid',
+      },
     });
 
     return {
@@ -82,6 +90,10 @@ export class ParticipantAgent {
       userPrompt,
       temperature: 0.7,
       maxTokens: 800,
+      metadata: {
+        actor: `participant:${this.definition.id}`,
+        callType: 'speak',
+      },
     });
   }
 }

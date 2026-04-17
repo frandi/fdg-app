@@ -24,7 +24,7 @@ export function SummaryScreen({
   const [exportError, setExportError] = useState<string | null>(null);
 
   useInput((input, key) => {
-    if (key.escape || input === 'b') {
+    if (key.escape) {
       onBack();
       return;
     }
@@ -50,7 +50,7 @@ export function SummaryScreen({
         ) : (
           <Text color="gray">[e] Export transcript &amp; summary</Text>
         )}
-        <Text color="gray">[b] Back to session  |  Ctrl+C to exit.</Text>
+        <Text color="gray">[esc] Back to session  |  Ctrl+C to exit.</Text>
       </Box>
     </Box>
   );

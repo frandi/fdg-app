@@ -9,3 +9,4 @@ export { WhisperRepository } from './repositories/whisper.repo.js';
 export { SummaryReportRepository } from './repositories/summary-report.repo.js';
 export { SessionEventsRepository } from './repositories/session-events.repo.js';
 export type { SessionEventRow } from './repositories/session-events.repo.js';
+export { LlmUsageRepository } from './repositories/llm-usage.repo.js';
