@@ -112,6 +112,31 @@ export class SessionRepository {
     };
   }
 
+  listCompletedWithSummary(): SessionRow[] {
+    const rows = this.db
+      .prepare(
+        `SELECT s.* FROM sessions s
+         INNER JOIN summary_reports sr ON sr.session_id = s.id
+         WHERE s.phase = 'completed'
+         ORDER BY s.completed_at DESC`,
+      )
+      .all() as Record<string, unknown>[];
+
+    return rows.map((row) => ({
+      id: row.id as string,
+      topic: row.topic as string,
+      goal: row.goal as string,
+      turnLimit: row.turn_limit as number,
+      hostPersona: row.host_persona as string,
+      hostLlmProvider: row.host_llm_provider as string,
+      hostLlmModel: row.host_llm_model as string,
+      phase: row.phase as SessionPhase,
+      currentTurn: row.current_turn as number,
+      createdAt: row.created_at as string,
+      completedAt: row.completed_at as string | null,
+    }));
+  }
+
   getParticipants(sessionId: string): ParticipantDefinition[] {
     const rows = this.db
       .prepare(
