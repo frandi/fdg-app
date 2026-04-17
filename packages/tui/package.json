@@ -15,15 +15,17 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fdg/types": "workspace:*",
-    "@fdg/engine": "workspace:*",
+    "@byteland/ink-scroll-bar": "^1.0.0",
     "@fdg/db": "workspace:*",
-    "ink": "^5.1.0",
+    "@fdg/engine": "workspace:*",
+    "@fdg/types": "workspace:*",
+    "ink": "^6.8.0",
+    "ink-scroll-view": "^0.3.6",
     "ink-text-input": "^6.0.0",
-    "react": "^18.3.0"
+    "react": "^19.2.5"
   },
   "devDependencies": {
-    "@types/react": "^18.3.0",
+    "@types/react": "^19.2.14",
     "tsup": "^8.4.0",
     "typescript": "^5.7.0"
   }

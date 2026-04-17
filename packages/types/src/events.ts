@@ -17,7 +17,7 @@ export interface EngineEvents {
   'host:selected': [payload: BidEvaluation];
   'participant:speaking': [payload: { participantId: string; chunk: string }];
   'participant:spoke': [payload: { participantId: string; utterance: Utterance }];
-  'host:checkpoint': [payload: { action: CheckpointAction; comment?: string }];
+  'host:checkpoint': [payload: { action: CheckpointAction; comment: string | null }];
   'whisper:received': [payload: { whisper: Whisper }];
   'whisper:acknowledged': [payload: Record<string, never>];
   'turnLimit:reached': [payload: { currentTurn: number; limit: number }];

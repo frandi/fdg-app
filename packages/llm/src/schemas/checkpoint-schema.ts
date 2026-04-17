@@ -8,11 +8,11 @@ export const checkpointSchema = {
         'The action to take: continue the discussion, narrow the topic with a steering statement, or conclude',
     },
     comment: {
-      type: 'string' as const,
+      type: ['string', 'null'] as const,
       description:
-        'Optional facilitation comment or steering statement. Required if action is "narrow".',
+        'Facilitation comment or steering statement. Required if action is "narrow"; otherwise may be null.',
     },
   },
-  required: ['action'] as const,
+  required: ['action', 'comment'] as const,
   additionalProperties: false,
 };

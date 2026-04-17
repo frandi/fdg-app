@@ -11,3 +11,4 @@ export { ConfigScreen } from './screens/ConfigScreen.js';
 export { DiscussionScreen } from './screens/DiscussionScreen.js';
 export { SummaryScreen } from './screens/SummaryScreen.js';
 export { PoolManageScreen } from './screens/PoolManageScreen.js';
+export { enterFullscreen, exitFullscreen } from './utils/fullscreen.js';

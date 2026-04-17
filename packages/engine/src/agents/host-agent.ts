@@ -28,7 +28,7 @@ import {
 
 export interface CheckpointResult {
   action: CheckpointAction;
-  comment?: string;
+  comment: string | null;
 }
 
 export interface TurnInfo {

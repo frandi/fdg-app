@@ -6,6 +6,7 @@ import type { Database } from '@fdg/db';
 import { ConfigScreen } from './screens/ConfigScreen.js';
 import { DiscussionScreen } from './screens/DiscussionScreen.js';
 import { SummaryScreen } from './screens/SummaryScreen.js';
+import { useTerminalDimensions } from './hooks/useTerminalDimensions.js';
 
 type AppPhase = 'config' | 'discussion' | 'summary';
 
@@ -15,6 +16,8 @@ interface AppProps {
 }
 
 export function App({ db, availableParticipants }: AppProps) {
+  const { columns, rows } = useTerminalDimensions();
+
   const [phase, setPhase] = useState<AppPhase>('config');
   const [participants, setParticipants] = useState<ParticipantDefinition[]>(availableParticipants);
   const [orchestrator, setOrchestrator] = useState<SessionOrchestrator | null>(null);
@@ -44,44 +47,52 @@ export function App({ db, availableParticipants }: AppProps) {
     setPhase('summary');
   }, []);
 
-  if (phase === 'config') {
-    return (
-      <Box flexDirection="column">
-        <Text bold color="cyan">
-          {'=== FDG - Focus Discussion Group ==='}
-        </Text>
-        <ConfigScreen
-          availableParticipants={participants}
-          db={db}
-          onParticipantsChanged={setParticipants}
-          onStart={handleStart}
+  const renderPhase = () => {
+    if (phase === 'config') {
+      return (
+        <Box flexDirection="column" flexGrow={1}>
+          <Text bold color="cyan">
+            {'=== FDG - Focus Discussion Group ==='}
+          </Text>
+          <ConfigScreen
+            availableParticipants={participants}
+            db={db}
+            onParticipantsChanged={setParticipants}
+            onStart={handleStart}
+          />
+        </Box>
+      );
+    }
+
+    if (phase === 'discussion' && orchestrator && eventBus && config) {
+      return (
+        <DiscussionScreen
+          orchestrator={orchestrator}
+          eventBus={eventBus}
+          participants={config.participants}
+          turnLimit={config.turnLimit}
+          onComplete={handleComplete}
         />
-      </Box>
-    );
-  }
+      );
+    }
 
-  if (phase === 'discussion' && orchestrator && eventBus && config) {
-    return (
-      <DiscussionScreen
-        orchestrator={orchestrator}
-        eventBus={eventBus}
-        participants={config.participants}
-        turnLimit={config.turnLimit}
-        onComplete={handleComplete}
-      />
-    );
-  }
+    if (phase === 'summary' && summary && config && orchestrator) {
+      return (
+        <SummaryScreen
+          db={db}
+          sessionId={orchestrator.getSessionId()}
+          config={config}
+          summary={summary}
+        />
+      );
+    }
 
-  if (phase === 'summary' && summary && config && orchestrator) {
-    return (
-      <SummaryScreen
-        db={db}
-        sessionId={orchestrator.getSessionId()}
-        config={config}
-        summary={summary}
-      />
-    );
-  }
+    return <Text>Loading...</Text>;
+  };
 
-  return <Text>Loading...</Text>;
+  return (
+    <Box flexDirection="column" width={columns} height={rows}>
+      {renderPhase()}
+    </Box>
+  );
 }

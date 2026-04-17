@@ -10,7 +10,7 @@ import { mkdirSync } from 'node:fs';
 import { Database } from '@fdg/db';
 import { LlmProvider } from '@fdg/types';
 import type { ParticipantDefinition } from '@fdg/types';
-import { App } from '@fdg/tui';
+import { App, enterFullscreen, exitFullscreen } from '@fdg/tui';
 
 // Ensure data directory exists
 const dataDir = join(homedir(), '.fdg');
@@ -67,10 +67,13 @@ if (participants.length === 0) {
   participants = db.participants.getAll();
 }
 
+enterFullscreen();
+
 const { waitUntilExit } = render(
   <App db={db} availableParticipants={participants} />,
 );
 
 waitUntilExit().then(() => {
+  exitFullscreen();
   db.close();
 });
