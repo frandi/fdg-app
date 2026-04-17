@@ -10,13 +10,24 @@ interface SummaryScreenProps {
   sessionId: string;
   config: SessionConfig;
   summary: SessionSummary;
+  onBack: () => void;
 }
 
-export function SummaryScreen({ db, sessionId, config, summary }: SummaryScreenProps) {
+export function SummaryScreen({
+  db,
+  sessionId,
+  config,
+  summary,
+  onBack,
+}: SummaryScreenProps) {
   const [exportPath, setExportPath] = useState<string | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
 
-  useInput((input) => {
+  useInput((input, key) => {
+    if (key.escape || input === 'b') {
+      onBack();
+      return;
+    }
     if (input === 'e' && !exportPath && !exportError) {
       try {
         const utterances = db.utterances.getBySession(sessionId);
@@ -39,7 +50,7 @@ export function SummaryScreen({ db, sessionId, config, summary }: SummaryScreenP
         ) : (
           <Text color="gray">[e] Export transcript &amp; summary</Text>
         )}
-        <Text color="gray">Press Ctrl+C to exit.</Text>
+        <Text color="gray">[b] Back to session  |  Ctrl+C to exit.</Text>
       </Box>
     </Box>
   );

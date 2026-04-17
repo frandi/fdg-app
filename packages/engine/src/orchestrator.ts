@@ -46,6 +46,8 @@ export class SessionOrchestrator {
     this.sessionId = db.sessions.create(config);
     this.turnLimit = config.turnLimit;
 
+    this.attachEventPersister();
+
     const participantNames = new Map(
       config.participants.map((p) => [p.id, p.name]),
     );
@@ -70,6 +72,26 @@ export class SessionOrchestrator {
 
   getSessionId(): string {
     return this.sessionId;
+  }
+
+  private attachEventPersister(): void {
+    const skip = new Set<string>([
+      'host:speaking',
+      'participant:opening',
+      'participant:speaking',
+      'error',
+    ]);
+    let seq = 0;
+    this.eventBus.setPersister((type, payload) => {
+      if (skip.has(type)) return;
+      this.db.sessionEvents.insert(
+        this.sessionId,
+        seq++,
+        Date.now(),
+        type,
+        payload,
+      );
+    });
   }
 
   async run(): Promise<SessionSummary> {

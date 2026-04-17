@@ -7,6 +7,7 @@ interface StatusBarProps {
   currentTurn: number;
   turnLimit: number;
   isBidding: boolean;
+  replay?: boolean;
 }
 
 const phaseLabels: Record<string, string> = {
@@ -17,11 +18,25 @@ const phaseLabels: Record<string, string> = {
   completed: 'Completed',
 };
 
-export function StatusBar({ phase, currentTurn, turnLimit, isBidding }: StatusBarProps) {
+export function StatusBar({
+  phase,
+  currentTurn,
+  turnLimit,
+  isBidding,
+  replay,
+}: StatusBarProps) {
   const phaseLabel = phase ? phaseLabels[phase] ?? phase : 'Ready';
 
   return (
     <Box borderStyle="single" paddingX={1}>
+      {replay && (
+        <>
+          <Text bold color="magenta">
+            {'\u25B6 REPLAY'}
+          </Text>
+          <Text> | </Text>
+        </>
+      )}
       <Text bold color="blue">
         Turn {currentTurn}/{turnLimit}
       </Text>
