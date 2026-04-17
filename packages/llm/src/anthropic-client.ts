@@ -1,6 +1,19 @@
 import Anthropic from '@anthropic-ai/sdk';
-import type { StructuredRequest, StreamRequest, TextRequest } from '@fdg/types';
+import {
+  LlmProvider,
+  type LlmCallMetadata,
+  type StructuredRequest,
+  type StreamRequest,
+  type TextRequest,
+} from '@fdg/types';
 import { BaseLlmClient } from './client.js';
+
+interface AnthropicUsage {
+  input_tokens?: number;
+  output_tokens?: number;
+  cache_read_input_tokens?: number | null;
+  cache_creation_input_tokens?: number | null;
+}
 
 export class AnthropicClient extends BaseLlmClient {
   private client: Anthropic;
@@ -8,6 +21,24 @@ export class AnthropicClient extends BaseLlmClient {
   constructor(model: string, apiKey: string) {
     super(model, apiKey);
     this.client = new Anthropic({ apiKey });
+  }
+
+  private reportUsage(
+    metadata: LlmCallMetadata | undefined,
+    usage: AnthropicUsage | undefined,
+  ): void {
+    if (!metadata || !this.usageSink || !usage) return;
+    this.usageSink({
+      actor: metadata.actor,
+      callType: metadata.callType,
+      provider: LlmProvider.Anthropic,
+      model: this.model,
+      inputTokens: usage.input_tokens ?? 0,
+      outputTokens: usage.output_tokens ?? 0,
+      cacheReadTokens: usage.cache_read_input_tokens ?? null,
+      cacheCreationTokens: usage.cache_creation_input_tokens ?? null,
+      timestampMs: Date.now(),
+    });
   }
 
   async generateStructured<T>(request: StructuredRequest): Promise<T> {
@@ -26,6 +57,8 @@ export class AnthropicClient extends BaseLlmClient {
       ],
       tool_choice: { type: 'tool', name: 'structured_response' },
     });
+
+    this.reportUsage(request.metadata, response.usage);
 
     const toolBlock = response.content.find((block) => block.type === 'tool_use');
     if (!toolBlock || toolBlock.type !== 'tool_use') {
@@ -51,6 +84,9 @@ export class AnthropicClient extends BaseLlmClient {
         yield event.delta.text;
       }
     }
+
+    const finalMessage = await stream.finalMessage();
+    this.reportUsage(request.metadata, finalMessage.usage);
   }
 
   async generateText(request: TextRequest): Promise<string> {
@@ -61,6 +97,8 @@ export class AnthropicClient extends BaseLlmClient {
       max_tokens: request.maxTokens ?? 2000,
       temperature: request.temperature ?? 0.3,
     });
+
+    this.reportUsage(request.metadata, response.usage);
 
     const textBlock = response.content.find((block) => block.type === 'text');
     if (!textBlock || textBlock.type !== 'text') {

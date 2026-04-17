@@ -3,7 +3,11 @@ import {
   UtteranceType,
   CheckpointAction,
 } from '@fdg/types';
-import type { SessionConfig, SessionSummary } from '@fdg/types';
+import type {
+  LlmClientInterface,
+  SessionConfig,
+  SessionSummary,
+} from '@fdg/types';
 import { createLlmClient } from '@fdg/llm';
 import type { Database } from '@fdg/db';
 import { EngineEventBus } from './event-bus.js';
@@ -37,6 +41,7 @@ export class SessionOrchestrator {
   private aborted = false;
   private turnLimitResolver: ((response: TurnLimitResponse) => void) | null =
     null;
+  private nextUsageSeq = 0;
 
   constructor(
     private config: SessionConfig,
@@ -56,11 +61,14 @@ export class SessionOrchestrator {
       config.host.llmProvider,
       config.host.llmModel,
     );
+    this.attachUsageSink(hostLlmClient);
     this.hostAgent = new HostAgent(config.host, hostLlmClient, participantNames);
 
-    this.participantAgents = config.participants.map(
-      (p) => new ParticipantAgent(p, createLlmClient(p.llmProvider, p.llmModel)),
-    );
+    this.participantAgents = config.participants.map((p) => {
+      const client = createLlmClient(p.llmProvider, p.llmModel);
+      this.attachUsageSink(client);
+      return new ParticipantAgent(p, client);
+    });
 
     this.transcriptManager = new TranscriptManager(db, this.sessionId);
     this.whisperQueue = new WhisperQueue(db, this.sessionId);
@@ -72,6 +80,17 @@ export class SessionOrchestrator {
 
   getSessionId(): string {
     return this.sessionId;
+  }
+
+  private attachUsageSink(client: LlmClientInterface): void {
+    client.setUsageSink((record) => {
+      this.db.llmUsage.insert({
+        sessionId: this.sessionId,
+        seq: this.nextUsageSeq++,
+        turnNumber: this.currentTurn > 0 ? this.currentTurn : null,
+        ...record,
+      });
+    });
   }
 
   private attachEventPersister(): void {

@@ -7,9 +7,10 @@ import { ConfigScreen } from './screens/ConfigScreen.js';
 import { DiscussionScreen } from './screens/DiscussionScreen.js';
 import { SummaryScreen } from './screens/SummaryScreen.js';
 import { ReplayScreen } from './screens/ReplayScreen.js';
+import { UsageScreen } from './screens/UsageScreen.js';
 import { useTerminalDimensions } from './hooks/useTerminalDimensions.js';
 
-type AppPhase = 'config' | 'discussion' | 'summary' | 'replay';
+type AppPhase = 'config' | 'discussion' | 'summary' | 'replay' | 'usage';
 
 interface AppProps {
   db: Database;
@@ -55,6 +56,10 @@ export function App({ db, availableParticipants }: AppProps) {
     setPhase('replay');
   }, []);
 
+  const handleRequestUsage = useCallback(() => {
+    setPhase('usage');
+  }, []);
+
   const handleBackToDiscussion = useCallback(() => {
     setPhase('discussion');
   }, []);
@@ -89,6 +94,7 @@ export function App({ db, availableParticipants }: AppProps) {
           onSessionCompleted={handleSessionCompleted}
           onRequestSummary={handleRequestSummary}
           onRequestReplay={handleRequestReplay}
+          onRequestUsage={handleRequestUsage}
         />
       );
     }
@@ -112,6 +118,17 @@ export function App({ db, availableParticipants }: AppProps) {
           sessionId={orchestrator.getSessionId()}
           participants={config.participants}
           turnLimit={config.turnLimit}
+          onExit={handleBackToDiscussion}
+        />
+      );
+    }
+
+    if (phase === 'usage' && config && orchestrator) {
+      return (
+        <UsageScreen
+          db={db}
+          sessionId={orchestrator.getSessionId()}
+          participants={config.participants}
           onExit={handleBackToDiscussion}
         />
       );

@@ -27,6 +27,7 @@ interface DiscussionScreenProps {
   onSessionCompleted: (summary: SessionSummary) => void;
   onRequestSummary: () => void;
   onRequestReplay: () => void;
+  onRequestUsage: () => void;
 }
 
 export function DiscussionScreen({
@@ -40,6 +41,7 @@ export function DiscussionScreen({
   onSessionCompleted,
   onRequestSummary,
   onRequestReplay,
+  onRequestUsage,
 }: DiscussionScreenProps) {
   const engine = useEngine(eventBus, turnLimit);
   const participantNames = new Map(participants.map((p) => [p.id, p.name]));
@@ -75,6 +77,7 @@ export function DiscussionScreen({
       if (!concluded) return;
       if (input === 's') onRequestSummary();
       else if (input === 'r') onRequestReplay();
+      else if (input === 'u') onRequestUsage();
     },
     { isActive: concluded },
   );

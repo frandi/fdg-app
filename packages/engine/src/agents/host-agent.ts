@@ -52,6 +52,7 @@ export class HostAgent {
       userPrompt,
       temperature: 0.7,
       maxTokens: 400,
+      metadata: { actor: 'host', callType: 'opening' },
     });
   }
 
@@ -76,6 +77,7 @@ export class HostAgent {
       schema: evaluationSchema,
       temperature: 0.2,
       maxTokens: 300,
+      metadata: { actor: 'host', callType: 'evaluate_bids' },
     });
   }
 
@@ -98,6 +100,7 @@ export class HostAgent {
       schema: checkpointSchema,
       temperature: 0.2,
       maxTokens: 200,
+      metadata: { actor: 'host', callType: 'checkpoint' },
     });
   }
 
@@ -110,6 +113,7 @@ export class HostAgent {
       userPrompt,
       temperature: 0.7,
       maxTokens: 400,
+      metadata: { actor: 'host', callType: 'closing' },
     });
   }
 
@@ -131,6 +135,7 @@ export class HostAgent {
       schema: summarySchema,
       temperature: 0.3,
       maxTokens: 2000,
+      metadata: { actor: 'system', callType: 'summary' },
     });
   }
 }

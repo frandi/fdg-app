@@ -12,7 +12,10 @@ export function ConcludedBanner() {
       <Text color="gray"> View summary </Text>
       <Text color="gray">|</Text>
       <Text color="white"> [r]</Text>
-      <Text color="gray"> Replay session</Text>
+      <Text color="gray"> Replay session </Text>
+      <Text color="gray">|</Text>
+      <Text color="white"> [u]</Text>
+      <Text color="gray"> Usage</Text>
     </Box>
   );
 }
