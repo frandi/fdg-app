@@ -16,6 +16,7 @@ interface AppProps {
 
 export function App({ db, availableParticipants }: AppProps) {
   const [phase, setPhase] = useState<AppPhase>('config');
+  const [participants, setParticipants] = useState<ParticipantDefinition[]>(availableParticipants);
   const [orchestrator, setOrchestrator] = useState<SessionOrchestrator | null>(null);
   const [eventBus, setEventBus] = useState<EngineEventBus | null>(null);
   const [config, setConfig] = useState<SessionConfig | null>(null);
@@ -50,7 +51,9 @@ export function App({ db, availableParticipants }: AppProps) {
           {'=== FDG - Focus Discussion Group ==='}
         </Text>
         <ConfigScreen
-          availableParticipants={availableParticipants}
+          availableParticipants={participants}
+          db={db}
+          onParticipantsChanged={setParticipants}
           onStart={handleStart}
         />
       </Box>

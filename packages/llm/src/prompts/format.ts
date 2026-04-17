@@ -10,7 +10,7 @@ export function formatBids(bids: Bid[], participantNames: Map<string, string>): 
   return bids
     .map((b) => {
       const name = participantNames.get(b.participantId) ?? b.participantId;
-      return `- ${name} (${b.bidType}): ${b.summary}`;
+      return `- [id="${b.participantId}"] ${name} (${b.bidType}): ${b.summary}`;
     })
     .join('\n');
 }

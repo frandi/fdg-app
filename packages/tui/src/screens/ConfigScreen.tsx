@@ -2,28 +2,59 @@ import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
 import type { ParticipantDefinition, HostDefinition, SessionConfig } from '@fdg/types';
+import type { Database } from '@fdg/db';
+import { PoolManageScreen } from './PoolManageScreen.js';
+import { loadCachedConfig, saveCachedConfig } from '../utils/config-cache.js';
 
 interface ConfigScreenProps {
   availableParticipants: ParticipantDefinition[];
+  db: Database;
+  onParticipantsChanged: (participants: ParticipantDefinition[]) => void;
   onStart: (config: SessionConfig) => void;
 }
 
-type Step = 'participants' | 'host' | 'topic' | 'goal' | 'turnLimit' | 'confirm';
+type Step = 'restorePrompt' | 'participants' | 'host' | 'topic' | 'goal' | 'turnLimit' | 'confirm';
+
+function initFromCache(availableParticipants: ParticipantDefinition[]) {
+  const cached = loadCachedConfig();
+  if (!cached) return null;
+  // Validate that cached participant IDs still exist in the pool
+  const validIds = cached.participantIds.filter((id) =>
+    availableParticipants.some((p) => p.id === id),
+  );
+  if (validIds.length < 2) return null;
+  return { ...cached, participantIds: validIds };
+}
 
 export function ConfigScreen({
   availableParticipants,
+  db,
+  onParticipantsChanged,
   onStart,
 }: ConfigScreenProps) {
-  const [step, setStep] = useState<Step>('participants');
+  const [cached] = useState(() => initFromCache(availableParticipants));
+  const [step, setStep] = useState<Step>(cached ? 'restorePrompt' : 'participants');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [cursor, setCursor] = useState(0);
+  const [managingPool, setManagingPool] = useState(false);
   const [hostPersona, setHostPersona] = useState('A balanced, Socratic facilitator who encourages deep analysis and diverse perspectives.');
   const [topic, setTopic] = useState('');
   const [goal, setGoal] = useState('');
   const [turnLimitStr, setTurnLimitStr] = useState('10');
 
   useInput((input, key) => {
-    if (step === 'participants') {
+    if (step === 'restorePrompt') {
+      if (input === 'y' && cached) {
+        setSelectedIds(new Set(cached.participantIds));
+        setHostPersona(cached.hostPersona);
+        setTopic(cached.topic);
+        setGoal(cached.goal);
+        setTurnLimitStr(String(cached.turnLimit));
+        setStep('confirm');
+      } else if (input === 'n') {
+        setStep('participants');
+      }
+    } else if (step === 'participants') {
       if (key.upArrow) {
         setCursor((prev) => Math.max(0, prev - 1));
       } else if (key.downArrow) {
@@ -38,11 +69,72 @@ export function ConfigScreen({
             return next;
           });
         }
+      } else if (input === 'm') {
+        setManagingPool(true);
       } else if (key.return && selectedIds.size >= 2) {
         setStep('host');
       }
+    } else if (step === 'confirm' && key.return) {
+      const selectedParticipants = availableParticipants.filter((p) =>
+        selectedIds.has(p.id),
+      );
+      const host: HostDefinition = {
+        persona: hostPersona,
+        llmProvider: selectedParticipants[0].llmProvider,
+        llmModel: selectedParticipants[0].llmModel,
+      };
+      const limit = parseInt(turnLimitStr, 10) || 10;
+      saveCachedConfig({
+        participantIds: [...selectedIds],
+        hostPersona,
+        topic,
+        goal,
+        turnLimit: limit,
+      });
+      onStart({
+        topic,
+        goal,
+        turnLimit: limit,
+        host,
+        participants: selectedParticipants,
+      });
     }
   });
+
+  if (step === 'restorePrompt' && cached) {
+    const cachedParticipantNames = cached.participantIds
+      .map((id) => availableParticipants.find((p) => p.id === id)?.name)
+      .filter(Boolean)
+      .join(', ');
+    return (
+      <Box flexDirection="column" paddingX={1}>
+        <Text bold color="yellow">Previous session config found:</Text>
+        <Text>Topic: {cached.topic}</Text>
+        <Text>Goal: {cached.goal}</Text>
+        <Text>Turn Limit: {cached.turnLimit}</Text>
+        <Text>Host: {cached.hostPersona.slice(0, 60)}...</Text>
+        <Text>Participants: {cachedParticipantNames}</Text>
+        <Box marginTop={1}>
+          <Text color="green">[y] Reuse  </Text>
+          <Text color="gray">[n] Start fresh</Text>
+        </Box>
+      </Box>
+    );
+  }
+
+  if (step === 'participants' && managingPool) {
+    return (
+      <PoolManageScreen
+        db={db}
+        onDone={(updated) => {
+          onParticipantsChanged(updated);
+          setSelectedIds((prev) => new Set([...prev].filter((id) => updated.some((p) => p.id === id))));
+          setCursor((prev) => Math.min(prev, Math.max(0, updated.length - 1)));
+          setManagingPool(false);
+        }}
+      />
+    );
+  }
 
   if (step === 'participants') {
     return (
@@ -56,7 +148,7 @@ export function ConfigScreen({
             {selectedIds.has(p.id) ? '[x]' : '[ ]'} {p.name} ({p.llmModel})
           </Text>
         ))}
-        <Text color="gray">Selected: {selectedIds.size}</Text>
+        <Text color="gray">Selected: {selectedIds.size}  [m] Manage pool</Text>
       </Box>
     );
   }
@@ -122,24 +214,7 @@ export function ConfigScreen({
   const selectedParticipants = availableParticipants.filter((p) =>
     selectedIds.has(p.id),
   );
-  const host: HostDefinition = {
-    persona: hostPersona,
-    llmProvider: selectedParticipants[0].llmProvider,
-    llmModel: selectedParticipants[0].llmModel,
-  };
   const limit = parseInt(turnLimitStr, 10) || 10;
-
-  useInput((_input, key) => {
-    if (key.return) {
-      onStart({
-        topic,
-        goal,
-        turnLimit: limit,
-        host,
-        participants: selectedParticipants,
-      });
-    }
-  });
 
   return (
     <Box flexDirection="column" paddingX={1}>

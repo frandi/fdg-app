@@ -45,6 +45,6 @@ ${whisperText}
 Incorporate these instructions into your evaluation.`;
   }
 
-  prompt += '\n\nSelect one participant and explain your reasoning.';
+  prompt += '\n\nSelect one participant. Use the exact participant id (from the id="" attribute in the bids list) as the selectedParticipantId. Explain your reasoning.';
   return prompt;
 }
