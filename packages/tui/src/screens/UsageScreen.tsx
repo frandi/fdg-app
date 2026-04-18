@@ -7,6 +7,7 @@ import type {
   UsageBucket,
 } from '@fdg/types';
 import type { Database } from '@fdg/db';
+import { ScrollableBox } from '../components/ScrollableBox.js';
 
 interface UsageScreenProps {
   db: Database;
@@ -144,106 +145,112 @@ export function UsageScreen({
   );
 
   return (
-    <Box flexDirection="column" padding={1}>
-      <Text bold color="cyan">
-        Session Usage
-      </Text>
-      <Text color="gray">
-        Session {sessionId.slice(0, 8)}... — technical breakdown of LLM token
-        consumption.
-      </Text>
+    <Box flexDirection="column" flexGrow={1}>
+      <ScrollableBox>
+        <Box flexDirection="column" padding={1}>
+          <Text bold color="cyan">
+            Session Usage
+          </Text>
+          <Text color="gray">
+            Session {sessionId.slice(0, 8)}... — technical breakdown of LLM token
+            consumption.
+          </Text>
 
-      <Box marginTop={1} flexDirection="column">
-        <Text bold color="white">
-          Overview
-        </Text>
-        <Text>
-          <Text color="gray">Total calls:         </Text>
-          {formatNumber(totals.calls)}
-        </Text>
-        <Text>
-          <Text color="gray">Input tokens:        </Text>
-          {formatNumber(totals.inputTokens)}
-        </Text>
-        <Text>
-          <Text color="gray">Output tokens:       </Text>
-          {formatNumber(totals.outputTokens)}
-        </Text>
-        <Text>
-          <Text color="gray">Total tokens:        </Text>
-          <Text bold>{formatNumber(totals.totalTokens)}</Text>
-        </Text>
-        {(usage.cacheReadTokens > 0 || usage.cacheCreationTokens > 0) && (
-          <>
-            <Text>
-              <Text color="gray">Cache read tokens:   </Text>
-              {formatNumber(usage.cacheReadTokens)}
+          <Box marginTop={1} flexDirection="column">
+            <Text bold color="white">
+              Overview
             </Text>
             <Text>
-              <Text color="gray">Cache write tokens:  </Text>
-              {formatNumber(usage.cacheCreationTokens)}
+              <Text color="gray">Total calls:         </Text>
+              {formatNumber(totals.calls)}
             </Text>
-          </>
-        )}
-      </Box>
+            <Text>
+              <Text color="gray">Input tokens:        </Text>
+              {formatNumber(totals.inputTokens)}
+            </Text>
+            <Text>
+              <Text color="gray">Output tokens:       </Text>
+              {formatNumber(totals.outputTokens)}
+            </Text>
+            <Text>
+              <Text color="gray">Total tokens:        </Text>
+              <Text bold>{formatNumber(totals.totalTokens)}</Text>
+            </Text>
+            {(usage.cacheReadTokens > 0 || usage.cacheCreationTokens > 0) && (
+              <>
+                <Text>
+                  <Text color="gray">Cache read tokens:   </Text>
+                  {formatNumber(usage.cacheReadTokens)}
+                </Text>
+                <Text>
+                  <Text color="gray">Cache write tokens:  </Text>
+                  {formatNumber(usage.cacheCreationTokens)}
+                </Text>
+              </>
+            )}
+          </Box>
 
-      <Box marginTop={1} flexDirection="column">
-        <Text bold color="white">
-          By Actor
+          <Box marginTop={1} flexDirection="column">
+            <Text bold color="white">
+              By Actor
+            </Text>
+            <Row cols={header} widths={colWidths} color="gray" bold />
+            {actorEntries.map(([actor, bucket]) =>
+              renderBucketRow(
+                resolveActorLabel(actor, nameByParticipantId),
+                bucket,
+              ),
+            )}
+          </Box>
+
+          <Box marginTop={1} flexDirection="column">
+            <Text bold color="white">
+              By Call Type
+            </Text>
+            <Row cols={header} widths={colWidths} color="gray" bold />
+            {CALL_TYPE_ORDER.filter((ct) => byCallType[ct].calls > 0).map((ct) =>
+              renderBucketRow(CALL_TYPE_LABEL[ct], byCallType[ct]),
+            )}
+          </Box>
+
+          <Box marginTop={1} flexDirection="column">
+            <Text bold color="white">
+              By Model
+            </Text>
+            <Row cols={header} widths={colWidths} color="gray" bold />
+            {modelEntries.map(([model, bucket]) =>
+              renderBucketRow(`${bucket.provider}:${model}`, bucket),
+            )}
+          </Box>
+
+          <Box marginTop={1} flexDirection="column">
+            <Text bold color="white">
+              Highlights
+            </Text>
+            {largestCall && (
+              <Text>
+                <Text color="gray">Largest call:        </Text>
+                {resolveActorLabel(largestCall.actor, nameByParticipantId)} /{' '}
+                {CALL_TYPE_LABEL[largestCall.callType]} —{' '}
+                {formatNumber(largestCall.totalTokens)} tokens (
+                {largestCall.model})
+              </Text>
+            )}
+            {usage.speakCount > 0 && (
+              <Text>
+                <Text color="gray">Avg tokens per turn: </Text>
+                {formatNumber(usage.speakAvgTokens)} ({usage.speakCount} speaking
+                turns)
+              </Text>
+            )}
+          </Box>
+        </Box>
+      </ScrollableBox>
+
+      <Box paddingX={1} marginTop={1} flexShrink={0}>
+        <Text color="gray">
+          [esc] Back  |  scroll: wheel / PgUp/PgDn / g,G
         </Text>
-        <Row cols={header} widths={colWidths} color="gray" bold />
-        {actorEntries.map(([actor, bucket]) =>
-          renderBucketRow(
-            resolveActorLabel(actor, nameByParticipantId),
-            bucket,
-          ),
-        )}
-      </Box>
-
-      <Box marginTop={1} flexDirection="column">
-        <Text bold color="white">
-          By Call Type
-        </Text>
-        <Row cols={header} widths={colWidths} color="gray" bold />
-        {CALL_TYPE_ORDER.filter((ct) => byCallType[ct].calls > 0).map((ct) =>
-          renderBucketRow(CALL_TYPE_LABEL[ct], byCallType[ct]),
-        )}
-      </Box>
-
-      <Box marginTop={1} flexDirection="column">
-        <Text bold color="white">
-          By Model
-        </Text>
-        <Row cols={header} widths={colWidths} color="gray" bold />
-        {modelEntries.map(([model, bucket]) =>
-          renderBucketRow(`${bucket.provider}:${model}`, bucket),
-        )}
-      </Box>
-
-      <Box marginTop={1} flexDirection="column">
-        <Text bold color="white">
-          Highlights
-        </Text>
-        {largestCall && (
-          <Text>
-            <Text color="gray">Largest call:        </Text>
-            {resolveActorLabel(largestCall.actor, nameByParticipantId)} /{' '}
-            {CALL_TYPE_LABEL[largestCall.callType]} —{' '}
-            {formatNumber(largestCall.totalTokens)} tokens (
-            {largestCall.model})
-          </Text>
-        )}
-        {usage.speakCount > 0 && (
-          <Text>
-            <Text color="gray">Avg tokens per turn: </Text>
-            {formatNumber(usage.speakAvgTokens)} ({usage.speakCount} speaking
-            turns)
-          </Text>
-        )}
-      </Box>
-
-      <Box marginTop={1}>
-        <Text color="gray">[esc] Back to session</Text>
       </Box>
     </Box>
   );
