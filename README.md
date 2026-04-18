@@ -11,8 +11,9 @@ Think of it as a focus group where every participant is an LLM — useful for ex
 3. **Main loop** — every turn, participants submit lightweight *bids* (New Point, Counter, Synthesis, etc.); the host picks who speaks based on goal alignment, novelty, and diversity of voice.
 4. **Whisper** — at any point you can privately nudge the host (e.g. "wrap up soon", "let participant C speak more").
 5. **Closing** — the host produces an exportable summary report covering positions, agreements, contentions, and unresolved questions.
+6. **After** — browse past sessions, replay them turn-by-turn, or inspect token usage.
 
-See `docs/FDG_App_Requirements.md` for the full spec.
+See `docs/USER_MANUAL.md` for a step-by-step walkthrough, or `docs/FDG_App_Requirements.md` for the full spec.
 
 ## Packages
 

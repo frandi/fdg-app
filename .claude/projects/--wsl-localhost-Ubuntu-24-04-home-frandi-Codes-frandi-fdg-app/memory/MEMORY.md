@@ -1,2 +1,0 @@
-- [Project overview](project_overview.md) — FDG: multi-agent focus group simulator, pnpm monorepo, 6 packages, fully implemented
-- [User profile](user_frandi.md) — Frandi, project creator, moved from Windows to WSL due to pnpm issues
