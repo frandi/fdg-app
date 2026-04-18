@@ -4,6 +4,7 @@ import TextInput from 'ink-text-input';
 import type { ParticipantDefinition } from '@fdg/types';
 import { LlmProvider } from '@fdg/types';
 import type { Database } from '@fdg/db';
+import { ScrollableBox } from '../components/ScrollableBox.js';
 
 interface PoolManageScreenProps {
   db: Database;
@@ -225,28 +226,36 @@ export function PoolManageScreen({ db, onDone }: PoolManageScreenProps) {
 
   // List mode
   return (
-    <Box flexDirection="column" paddingX={1}>
-      <Text bold color="yellow">
-        Manage Participant Pool
-      </Text>
-      {participants.length === 0 ? (
-        <Text color="gray">No participants. Press [n] to create one.</Text>
-      ) : (
-        participants.map((p, i) => (
-          <Box key={p.id} flexDirection="column">
-            <Text color={i === cursor ? 'cyan' : 'white'}>
-              {i === cursor ? '> ' : '  '}
-              {p.name} ({p.llmProvider}/{p.llmModel})
-            </Text>
-            <Text color="gray">
-              {'    '}{p.persona.length > 80 ? p.persona.slice(0, 77) + '...' : p.persona}
-            </Text>
-          </Box>
-        ))
-      )}
-      <Text color="gray">
-        [n] New  [e] Edit  [d] Delete  [Esc] Back
-      </Text>
+    <Box flexDirection="column" flexGrow={1} paddingX={1}>
+      <Box flexShrink={0}>
+        <Text bold color="yellow">
+          Manage Participant Pool
+        </Text>
+      </Box>
+      <ScrollableBox>
+        <Box flexDirection="column">
+          {participants.length === 0 ? (
+            <Text color="gray">No participants. Press [n] to create one.</Text>
+          ) : (
+            participants.map((p, i) => (
+              <Box key={p.id} flexDirection="column">
+                <Text color={i === cursor ? 'cyan' : 'white'}>
+                  {i === cursor ? '> ' : '  '}
+                  {p.name} ({p.llmProvider}/{p.llmModel})
+                </Text>
+                <Text color="gray">
+                  {'    '}{p.persona.length > 80 ? p.persona.slice(0, 77) + '...' : p.persona}
+                </Text>
+              </Box>
+            ))
+          )}
+        </Box>
+      </ScrollableBox>
+      <Box flexShrink={0}>
+        <Text color="gray">
+          [n] New  [e] Edit  [d] Delete  [Esc] Back  |  scroll: wheel / PgUp/PgDn
+        </Text>
+      </Box>
     </Box>
   );
 }

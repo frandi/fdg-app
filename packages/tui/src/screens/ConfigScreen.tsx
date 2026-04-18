@@ -4,6 +4,7 @@ import TextInput from 'ink-text-input';
 import type { ParticipantDefinition, HostDefinition, SessionConfig } from '@fdg/types';
 import type { Database } from '@fdg/db';
 import { PoolManageScreen } from './PoolManageScreen.js';
+import { ScrollableBox } from '../components/ScrollableBox.js';
 import { loadCachedConfig, saveCachedConfig } from '../utils/config-cache.js';
 
 interface ConfigScreenProps {
@@ -138,17 +139,27 @@ export function ConfigScreen({
 
   if (step === 'participants') {
     return (
-      <Box flexDirection="column" paddingX={1}>
-        <Text bold color="yellow">
-          Select Participants (Space to toggle, Enter to confirm, min 2)
-        </Text>
-        {availableParticipants.map((p, i) => (
-          <Text key={p.id} color={i === cursor ? 'cyan' : 'white'}>
-            {i === cursor ? '> ' : '  '}
-            {selectedIds.has(p.id) ? '[x]' : '[ ]'} {p.name} ({p.llmModel})
+      <Box flexDirection="column" flexGrow={1} paddingX={1}>
+        <Box flexShrink={0}>
+          <Text bold color="yellow">
+            Select Participants (Space to toggle, Enter to confirm, min 2)
           </Text>
-        ))}
-        <Text color="gray">Selected: {selectedIds.size}  [m] Manage pool</Text>
+        </Box>
+        <ScrollableBox>
+          <Box flexDirection="column">
+            {availableParticipants.map((p, i) => (
+              <Text key={p.id} color={i === cursor ? 'cyan' : 'white'}>
+                {i === cursor ? '> ' : '  '}
+                {selectedIds.has(p.id) ? '[x]' : '[ ]'} {p.name} ({p.llmModel})
+              </Text>
+            ))}
+          </Box>
+        </ScrollableBox>
+        <Box flexShrink={0}>
+          <Text color="gray">
+            Selected: {selectedIds.size}  [m] Manage pool  |  scroll: wheel / PgUp/PgDn
+          </Text>
+        </Box>
       </Box>
     );
   }

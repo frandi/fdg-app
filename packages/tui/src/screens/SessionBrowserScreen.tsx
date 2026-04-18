@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import type { SessionRow } from '@fdg/db';
+import { ScrollableBox } from '../components/ScrollableBox.js';
 
 interface SessionBrowserScreenProps {
   sessions: SessionRow[];
@@ -39,29 +40,39 @@ export function SessionBrowserScreen({
   });
 
   return (
-    <Box flexDirection="column" paddingX={1}>
-      <Text bold color="cyan">
-        {'=== FDG - Focus Discussion Group ==='}
-      </Text>
-      <Box marginTop={1}>
-        <Text bold color="yellow">Previous Sessions</Text>
+    <Box flexDirection="column" flexGrow={1} paddingX={1}>
+      <Box flexDirection="column" flexShrink={0}>
+        <Text bold color="cyan">
+          {'=== FDG - Focus Discussion Group ==='}
+        </Text>
+        <Box marginTop={1}>
+          <Text bold color="yellow">Previous Sessions</Text>
+        </Box>
+        <Text color="gray">{'─'.repeat(60)}</Text>
       </Box>
-      <Text color="gray">{'─'.repeat(60)}</Text>
-      {sessions.map((s, i) => {
-        const active = i === cursor;
-        return (
-          <Box key={s.id} flexDirection="row">
-            <Text color={active ? 'cyan' : 'white'}>
-              {active ? '> ' : '  '}
-              {formatCompletedAt(s.completedAt)}  {truncate(s.topic, 40).padEnd(40)}  {s.currentTurn} turns
-            </Text>
-          </Box>
-        );
-      })}
-      <Text color="gray">{'─'.repeat(60)}</Text>
-      <Text color="gray">
-        [↑/↓] Navigate  [Enter] Resume  [n] New session  [q] Quit to new
-      </Text>
+
+      <ScrollableBox>
+        <Box flexDirection="column">
+          {sessions.map((s, i) => {
+            const active = i === cursor;
+            return (
+              <Box key={s.id} flexDirection="row">
+                <Text color={active ? 'cyan' : 'white'}>
+                  {active ? '> ' : '  '}
+                  {formatCompletedAt(s.completedAt)}  {truncate(s.topic, 40).padEnd(40)}  {s.currentTurn} turns
+                </Text>
+              </Box>
+            );
+          })}
+        </Box>
+      </ScrollableBox>
+
+      <Box flexDirection="column" flexShrink={0}>
+        <Text color="gray">{'─'.repeat(60)}</Text>
+        <Text color="gray">
+          [↑/↓] Navigate  [Enter] Resume  [n] New session  [q] Quit to new  |  scroll: wheel / PgUp/PgDn
+        </Text>
+      </Box>
     </Box>
   );
 }

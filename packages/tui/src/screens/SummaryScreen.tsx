@@ -3,6 +3,7 @@ import { Box, Text, useInput } from 'ink';
 import type { SessionConfig, SessionSummary } from '@fdg/types';
 import type { Database } from '@fdg/db';
 import { SummaryView } from '../components/SummaryView.js';
+import { ScrollableBox } from '../components/ScrollableBox.js';
 import { exportSession } from '../utils/export.js';
 
 interface SummaryScreenProps {
@@ -40,9 +41,11 @@ export function SummaryScreen({
   });
 
   return (
-    <Box flexDirection="column">
-      <SummaryView summary={summary} />
-      <Box paddingX={1} marginTop={1} flexDirection="column">
+    <Box flexDirection="column" flexGrow={1}>
+      <ScrollableBox>
+        <SummaryView summary={summary} />
+      </ScrollableBox>
+      <Box paddingX={1} marginTop={1} flexDirection="column" flexShrink={0}>
         {exportPath ? (
           <Text color="green">Exported to {exportPath}</Text>
         ) : exportError ? (
@@ -50,7 +53,9 @@ export function SummaryScreen({
         ) : (
           <Text color="gray">[e] Export transcript &amp; summary</Text>
         )}
-        <Text color="gray">[esc] Back to session  |  Ctrl+C to exit.</Text>
+        <Text color="gray">
+          [esc] Back to session  |  scroll: wheel / PgUp/PgDn / g,G  |  Ctrl+C to exit.
+        </Text>
       </Box>
     </Box>
   );
