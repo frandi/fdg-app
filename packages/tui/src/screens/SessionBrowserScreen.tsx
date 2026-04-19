@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
-import type { SessionRow } from '@fdg/db';
+import type { SessionRow } from '@fdg/sdk';
 import { ScrollableBox } from '../components/ScrollableBox.js';
 
 interface SessionBrowserScreenProps {

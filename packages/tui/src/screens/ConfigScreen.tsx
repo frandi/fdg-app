@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
 import type { ParticipantDefinition, HostDefinition, SessionConfig } from '@fdg/contracts';
-import type { Database } from '@fdg/db';
+import type { ParticipantPoolApi } from '@fdg/sdk';
 import { PoolManageScreen } from './PoolManageScreen.js';
 import { ScrollableBox } from '../components/ScrollableBox.js';
 import { loadCachedConfig, saveCachedConfig } from '../utils/config-cache.js';
 
 interface ConfigScreenProps {
   availableParticipants: ParticipantDefinition[];
-  db: Database;
+  pool: ParticipantPoolApi;
   onParticipantsChanged: (participants: ParticipantDefinition[]) => void;
   onStart: (config: SessionConfig) => void;
 }
@@ -29,7 +29,7 @@ function initFromCache(availableParticipants: ParticipantDefinition[]) {
 
 export function ConfigScreen({
   availableParticipants,
-  db,
+  pool,
   onParticipantsChanged,
   onStart,
 }: ConfigScreenProps) {
@@ -126,7 +126,7 @@ export function ConfigScreen({
   if (step === 'participants' && managingPool) {
     return (
       <PoolManageScreen
-        db={db}
+        pool={pool}
         onDone={(updated) => {
           onParticipantsChanged(updated);
           setSelectedIds((prev) => new Set([...prev].filter((id) => updated.some((p) => p.id === id))));

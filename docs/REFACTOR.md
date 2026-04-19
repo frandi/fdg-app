@@ -74,3 +74,14 @@ interface ReplayHandle {
 - **🟢 Checkpoint 0** (baseline): `pnpm -r build` ✅, `pnpm -r typecheck` ✅ on `develop` off `main` @ 0583e11.
 - **🟢 Checkpoint 1** (types → contracts rename): `pnpm -r build` ✅, `pnpm -r typecheck` ✅. 45 source files + 5 package.json + 2 doc files updated.
 - **🟢 Checkpoint 2** (@fdg/sdk scaffolded): `pnpm -r build` ✅, `pnpm -r typecheck` ✅, `pnpm --filter @fdg/sdk smoke` ✅ (10/10 assertions). SDK surface: `createFdgClient`, `FdgClient`, `SessionHandle`, `ReplayHandle`, `ParticipantPoolApi`, `TypedEventStream`. TUI untouched; existing flows unaffected. Live-session path (startSession+LLM) pending user verification via TUI run; covered by Phase 3 migration.
+- **🟢 Checkpoint 3** (TUI fully on SDK): `pnpm -r build` ✅, `pnpm -r typecheck` ✅, `pnpm --filter @fdg/sdk smoke` ✅. All screens migrated:
+  - 3a PoolManageScreen + ConfigScreen → `client.participants.*`
+  - 3b SessionBrowserScreen + cli → `client.listSessions()`
+  - 3c SummaryScreen + UsageScreen → `client.getTranscript/getUsage`
+  - 3d ReplayScreen → `client.replaySession()` → `ReplayHandle`
+  - 3e App.handleResumeSession → `client.resumeSession()`
+  - 3f App.handleStart + DiscussionScreen + useEngine → `client.startSession()` → `SessionHandle`; `useEngine` now consumes `EngineEventStream` (tracks unsubscribers instead of `removeAllListeners`)
+  - 3g `@fdg/engine` + `@fdg/db` removed from `packages/tui/package.json`; no imports remain (grep ✅)
+  - 3h cli simplified — drops `@fdg/engine`/`@fdg/db`, no explicit `new Database(path)`; SDK owns db lifecycle (escape hatch `CreateClientOptions.database` kept for future use but unused now)
+  - SDK re-exports `SessionRow` so TUI needs only `@fdg/sdk` + `@fdg/contracts`.
+  - Live-session end-to-end TUI run pending user verification.

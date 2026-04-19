@@ -4,23 +4,15 @@ import { resolve } from 'node:path';
 config({ path: resolve(import.meta.dirname, '..', '..', '..', '.env') });
 import React from 'react';
 import { render } from 'ink';
-import { join } from 'node:path';
-import { homedir } from 'node:os';
-import { mkdirSync } from 'node:fs';
-import { Database } from '@fdg/db';
 import { LlmProvider } from '@fdg/contracts';
 import type { ParticipantDefinition } from '@fdg/contracts';
+import { createFdgClient } from '@fdg/sdk';
 import { App, enterFullscreen, exitFullscreen } from '@fdg/tui';
 
-// Ensure data directory exists
-const dataDir = join(homedir(), '.fdg');
-mkdirSync(dataDir, { recursive: true });
-
-const dbPath = join(dataDir, 'fdg.db');
-const db = new Database(dbPath);
+const client = createFdgClient();
 
 // Seed default participants if pool is empty
-let participants = db.participants.getAll();
+let participants = client.participants.list();
 if (participants.length === 0) {
   const defaults: Array<Omit<ParticipantDefinition, 'id'>> = [
     {
@@ -61,19 +53,19 @@ if (participants.length === 0) {
   ];
 
   for (const d of defaults) {
-    db.participants.create(d.name, d.persona, d.llmProvider, d.llmModel);
+    client.participants.create(d);
   }
 
-  participants = db.participants.getAll();
+  participants = client.participants.list();
 }
 
-const initialCompletedSessions = db.sessions.listCompletedWithSummary();
+const initialCompletedSessions = client.listSessions();
 
 enterFullscreen();
 
 const { waitUntilExit } = render(
   <App
-    db={db}
+    client={client}
     availableParticipants={participants}
     initialCompletedSessions={initialCompletedSessions}
   />,
@@ -81,5 +73,5 @@ const { waitUntilExit } = render(
 
 waitUntilExit().then(() => {
   exitFullscreen();
-  db.close();
+  client.close();
 });

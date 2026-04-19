@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import type { ParticipantDefinition } from '@fdg/contracts';
-import { EngineEventBus, SessionReplayer } from '@fdg/engine';
-import type { Database } from '@fdg/db';
+import type { FdgClient, ReplayHandle } from '@fdg/sdk';
 import { useEngine } from '../hooks/useEngine.js';
 import { TranscriptPanel } from '../components/TranscriptPanel.js';
 import { ParticipantList } from '../components/ParticipantList.js';
@@ -10,7 +9,7 @@ import { StatusBar } from '../components/StatusBar.js';
 import { SpeakerBanner } from '../components/SpeakerBanner.js';
 
 interface ReplayScreenProps {
-  db: Database;
+  client: FdgClient;
   sessionId: string;
   participants: ParticipantDefinition[];
   turnLimit: number;
@@ -18,36 +17,34 @@ interface ReplayScreenProps {
 }
 
 export function ReplayScreen({
-  db,
+  client,
   sessionId,
   participants,
   turnLimit,
   onExit,
 }: ReplayScreenProps) {
-  const eventBus = useMemo(() => new EngineEventBus(), []);
-  const engine = useEngine(eventBus, turnLimit);
   const [finished, setFinished] = useState(false);
-  const [noData, setNoData] = useState(false);
+  const noData = useMemo(() => !client.hasReplayData(sessionId), [client, sessionId]);
+
+  const handle = useMemo<ReplayHandle | null>(() => {
+    if (noData) return null;
+    return client.replaySession(sessionId, {
+      onFinished: () => setFinished(true),
+    });
+  }, [client, sessionId, noData]);
+
+  const engine = useEngine(handle?.events ?? null, turnLimit);
 
   const participantNames = new Map(participants.map((p) => [p.id, p.name]));
   participantNames.set('host', 'Host');
 
   useEffect(() => {
-    const hasEvents = db.sessionEvents.getBySession(sessionId).length > 0;
-    if (!hasEvents) {
-      setNoData(true);
-      return;
-    }
-
-    const replayer = new SessionReplayer(sessionId, db, eventBus, {
-      onFinished: () => setFinished(true),
-    });
-    replayer.start();
-
+    if (!handle) return;
+    handle.start();
     return () => {
-      replayer.stop();
+      handle.stop();
     };
-  }, [db, sessionId, eventBus]);
+  }, [handle]);
 
   useInput((input, key) => {
     if (key.escape || input === 'q') {

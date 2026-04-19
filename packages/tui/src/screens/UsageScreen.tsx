@@ -6,11 +6,11 @@ import type {
   SessionUsage,
   UsageBucket,
 } from '@fdg/contracts';
-import type { Database } from '@fdg/db';
+import type { FdgClient } from '@fdg/sdk';
 import { ScrollableBox } from '../components/ScrollableBox.js';
 
 interface UsageScreenProps {
-  db: Database;
+  client: FdgClient;
   sessionId: string;
   participants: ParticipantDefinition[];
   onExit: () => void;
@@ -83,7 +83,7 @@ function Row({
 }
 
 export function UsageScreen({
-  db,
+  client,
   sessionId,
   participants,
   onExit,
@@ -95,8 +95,8 @@ export function UsageScreen({
   });
 
   const usage: SessionUsage = useMemo(
-    () => db.llmUsage.aggregateBySession(sessionId),
-    [db, sessionId],
+    () => client.getUsage(sessionId),
+    [client, sessionId],
   );
 
   const nameByParticipantId = useMemo(

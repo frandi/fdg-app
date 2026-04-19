@@ -23,12 +23,9 @@ importers:
       '@fdg/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@fdg/db':
+      '@fdg/sdk':
         specifier: workspace:*
-        version: link:../db
-      '@fdg/engine':
-        specifier: workspace:*
-        version: link:../engine
+        version: link:../sdk
       '@fdg/tui':
         specifier: workspace:*
         version: link:../tui
@@ -157,12 +154,9 @@ importers:
       '@fdg/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@fdg/db':
+      '@fdg/sdk':
         specifier: workspace:*
-        version: link:../db
-      '@fdg/engine':
-        specifier: workspace:*
-        version: link:../engine
+        version: link:../sdk
       ink:
         specifier: ^6.8.0
         version: 6.8.0(@types/react@19.2.14)(react@19.2.5)

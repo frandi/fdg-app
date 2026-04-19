@@ -11,3 +11,4 @@ export type {
   ParticipantPatch,
 } from './client.js';
 export type { TypedEventStream, EngineEventStream } from './events.js';
+export type { SessionRow } from '@fdg/db';

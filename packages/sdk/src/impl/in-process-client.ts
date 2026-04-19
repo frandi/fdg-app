@@ -29,19 +29,26 @@ import { createEngineEventStream } from './event-stream.js';
 import { reconstructConfig } from './reconstruct-config.js';
 
 export function createFdgClient(opts: CreateClientOptions = {}): FdgClient {
+  if (opts.database) {
+    return new InProcessFdgClient(opts.database, /* ownsDb */ false);
+  }
+
   const dataDir = opts.dataDir ?? join(homedir(), '.fdg');
   mkdirSync(dataDir, { recursive: true });
 
   const dbPath = join(dataDir, opts.dbFileName ?? 'fdg.db');
   const db = new Database(dbPath);
 
-  return new InProcessFdgClient(db);
+  return new InProcessFdgClient(db, /* ownsDb */ true);
 }
 
 class InProcessFdgClient implements FdgClient {
   readonly participants: ParticipantPoolApi;
 
-  constructor(private db: Database) {
+  constructor(
+    private db: Database,
+    private ownsDb: boolean,
+  ) {
     this.participants = createParticipantPoolApi(db);
   }
 
@@ -108,7 +115,9 @@ class InProcessFdgClient implements FdgClient {
   }
 
   close(): void {
-    this.db.close();
+    if (this.ownsDb) {
+      this.db.close();
+    }
   }
 }
 

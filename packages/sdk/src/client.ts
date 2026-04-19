@@ -6,7 +6,7 @@ import type {
   LlmProvider,
   SessionUsage,
 } from '@fdg/contracts';
-import type { SessionRow } from '@fdg/db';
+import type { Database, SessionRow } from '@fdg/db';
 import type { EngineEventStream } from './events.js';
 
 export interface ReplayOptions {
@@ -72,4 +72,13 @@ export interface CreateClientOptions {
   dataDir?: string;
   /** Override for the SQLite filename within dataDir. Defaults to "fdg.db". */
   dbFileName?: string;
+  /**
+   * Migration escape hatch: reuse an existing Database instance instead of
+   * constructing a new one. When provided, the caller retains ownership and
+   * `client.close()` becomes a no-op. Used during the TUI→SDK migration so
+   * legacy screens and the SDK share a single sqlite handle.
+   *
+   * @internal — will be removed once all UIs consume the SDK exclusively.
+   */
+  database?: Database;
 }
