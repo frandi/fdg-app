@@ -1,5 +1,5 @@
 import type BetterSqlite3 from 'better-sqlite3';
-import type { BidType } from '@fdg/types';
+import type { BidType } from '@fdg/contracts';
 
 export interface BidRow {
   id: number;

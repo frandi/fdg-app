@@ -1,4 +1,4 @@
-import type { Whisper } from '@fdg/types';
+import type { Whisper } from '@fdg/contracts';
 import type { Database } from '@fdg/db';
 
 export class WhisperQueue {

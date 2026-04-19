@@ -4,7 +4,7 @@ import type {
   SessionConfig,
   SessionSummary,
   ParticipantDefinition,
-} from '@fdg/types';
+} from '@fdg/contracts';
 import { SessionOrchestrator, EngineEventBus } from '@fdg/engine';
 import type { Database, SessionRow } from '@fdg/db';
 import { ConfigScreen } from './screens/ConfigScreen.js';

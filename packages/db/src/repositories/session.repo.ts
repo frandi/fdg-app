@@ -1,5 +1,5 @@
 import type BetterSqlite3 from 'better-sqlite3';
-import type { SessionConfig, SessionPhase, ParticipantDefinition } from '@fdg/types';
+import type { SessionConfig, SessionPhase, ParticipantDefinition } from '@fdg/contracts';
 import { randomUUID } from 'node:crypto';
 
 export interface SessionRow {

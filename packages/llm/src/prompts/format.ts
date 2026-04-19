@@ -1,4 +1,4 @@
-import type { Utterance, Bid } from '@fdg/types';
+import type { Utterance, Bid } from '@fdg/contracts';
 
 export function formatTranscript(utterances: Utterance[]): string {
   return utterances

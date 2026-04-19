@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import type { SessionPhase } from '@fdg/types';
+import type { SessionPhase } from '@fdg/contracts';
 
 interface StatusBarProps {
   phase: SessionPhase | null;

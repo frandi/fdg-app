@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3';
-import type { EngineEvents } from '@fdg/types';
+import type { EngineEvents } from '@fdg/contracts';
 
 export type EnginePersister = (type: string, payload: unknown) => void;
 

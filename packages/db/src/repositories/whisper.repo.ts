@@ -1,5 +1,5 @@
 import type BetterSqlite3 from 'better-sqlite3';
-import type { Whisper } from '@fdg/types';
+import type { Whisper } from '@fdg/contracts';
 
 export class WhisperRepository {
   constructor(private db: BetterSqlite3.Database) {}

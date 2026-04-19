@@ -5,7 +5,7 @@ import {
   type LlmUsageRow,
   type SessionUsage,
   type UsageBucket,
-} from '@fdg/types';
+} from '@fdg/contracts';
 
 const CALL_TYPES: LlmCallType[] = [
   'opening',

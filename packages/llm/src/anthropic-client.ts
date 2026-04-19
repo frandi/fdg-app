@@ -5,7 +5,7 @@ import {
   type StructuredRequest,
   type StreamRequest,
   type TextRequest,
-} from '@fdg/types';
+} from '@fdg/contracts';
 import { BaseLlmClient } from './client.js';
 
 interface AnthropicUsage {

@@ -1,4 +1,4 @@
-import type { Bid, Utterance } from '@fdg/types';
+import type { Bid, Utterance } from '@fdg/contracts';
 import type { ParticipantAgent } from '../agents/participant-agent.js';
 import type { EngineEventBus } from '../event-bus.js';
 

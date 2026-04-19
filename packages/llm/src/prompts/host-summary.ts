@@ -1,4 +1,4 @@
-import type { HostDefinition } from '@fdg/types';
+import type { HostDefinition } from '@fdg/contracts';
 
 export function buildHostSummarySystemPrompt(host: HostDefinition): string {
   return `You are the host and facilitator of a focus group discussion that has just concluded.

@@ -7,7 +7,7 @@ import type {
   Whisper,
   SessionSummary,
   CheckpointAction,
-} from '@fdg/types';
+} from '@fdg/contracts';
 import {
   buildHostOpeningSystemPrompt,
   buildHostOpeningUserPrompt,

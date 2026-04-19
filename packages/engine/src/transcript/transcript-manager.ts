@@ -1,4 +1,4 @@
-import type { Utterance, UtteranceType } from '@fdg/types';
+import type { Utterance, UtteranceType } from '@fdg/contracts';
 import type { Database } from '@fdg/db';
 import { formatTranscript } from '@fdg/llm';
 import { buildContextWindow } from './context-window.js';

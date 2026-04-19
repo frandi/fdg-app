@@ -20,6 +20,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@fdg/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       '@fdg/db':
         specifier: workspace:*
         version: link:../db
@@ -29,9 +32,6 @@ importers:
       '@fdg/tui':
         specifier: workspace:*
         version: link:../tui
-      '@fdg/types':
-        specifier: workspace:*
-        version: link:../types
       dotenv:
         specifier: ^16.4.0
         version: 16.6.1
@@ -55,11 +55,20 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
+  packages/contracts:
+    devDependencies:
+      tsup:
+        specifier: ^8.4.0
+        version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+
   packages/db:
     dependencies:
-      '@fdg/types':
+      '@fdg/contracts':
         specifier: workspace:*
-        version: link:../types
+        version: link:../contracts
       better-sqlite3:
         specifier: ^11.8.0
         version: 11.10.0
@@ -76,15 +85,15 @@ importers:
 
   packages/engine:
     dependencies:
+      '@fdg/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       '@fdg/db':
         specifier: workspace:*
         version: link:../db
       '@fdg/llm':
         specifier: workspace:*
         version: link:../llm
-      '@fdg/types':
-        specifier: workspace:*
-        version: link:../types
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.4
@@ -101,9 +110,9 @@ importers:
       '@anthropic-ai/sdk':
         specifier: ^0.39.0
         version: 0.39.0
-      '@fdg/types':
+      '@fdg/contracts':
         specifier: workspace:*
-        version: link:../types
+        version: link:../contracts
       openai:
         specifier: ^4.80.0
         version: 4.104.0(ws@8.20.0)
@@ -120,15 +129,15 @@ importers:
       '@byteland/ink-scroll-bar':
         specifier: ^1.0.0
         version: 1.0.0(ink@6.8.0(@types/react@19.2.14)(react@19.2.5))(react@19.2.5)
+      '@fdg/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       '@fdg/db':
         specifier: workspace:*
         version: link:../db
       '@fdg/engine':
         specifier: workspace:*
         version: link:../engine
-      '@fdg/types':
-        specifier: workspace:*
-        version: link:../types
       ink:
         specifier: ^6.8.0
         version: 6.8.0(@types/react@19.2.14)(react@19.2.5)
@@ -145,15 +154,6 @@ importers:
       '@types/react':
         specifier: ^19.2.14
         version: 19.2.14
-      tsup:
-        specifier: ^8.4.0
-        version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.7.0
-        version: 5.9.3
-
-  packages/types:
-    devDependencies:
       tsup:
         specifier: ^8.4.0
         version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)

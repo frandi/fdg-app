@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
-import type { ParticipantDefinition } from '@fdg/types';
+import type { ParticipantDefinition } from '@fdg/contracts';
 import { EngineEventBus, SessionReplayer } from '@fdg/engine';
 import type { Database } from '@fdg/db';
 import { useEngine } from '../hooks/useEngine.js';

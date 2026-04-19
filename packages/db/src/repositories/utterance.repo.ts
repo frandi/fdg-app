@@ -1,5 +1,5 @@
 import type BetterSqlite3 from 'better-sqlite3';
-import type { Utterance, UtteranceType } from '@fdg/types';
+import type { Utterance, UtteranceType } from '@fdg/contracts';
 
 export class UtteranceRepository {
   constructor(private db: BetterSqlite3.Database) {}

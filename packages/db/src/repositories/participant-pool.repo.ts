@@ -1,5 +1,5 @@
 import type BetterSqlite3 from 'better-sqlite3';
-import type { ParticipantDefinition, LlmProvider } from '@fdg/types';
+import type { ParticipantDefinition, LlmProvider } from '@fdg/contracts';
 import { randomUUID } from 'node:crypto';
 
 export class ParticipantPoolRepository {

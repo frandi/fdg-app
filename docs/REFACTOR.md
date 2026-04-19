@@ -72,3 +72,4 @@ interface ReplayHandle {
 ## Checkpoint log
 
 - **🟢 Checkpoint 0** (baseline): `pnpm -r build` ✅, `pnpm -r typecheck` ✅ on `develop` off `main` @ 0583e11.
+- **🟢 Checkpoint 1** (types → contracts rename): `pnpm -r build` ✅, `pnpm -r typecheck` ✅. 45 source files + 5 package.json + 2 doc files updated.

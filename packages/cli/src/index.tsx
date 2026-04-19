@@ -8,8 +8,8 @@ import { join } from 'node:path';
 import { homedir } from 'node:os';
 import { mkdirSync } from 'node:fs';
 import { Database } from '@fdg/db';
-import { LlmProvider } from '@fdg/types';
-import type { ParticipantDefinition } from '@fdg/types';
+import { LlmProvider } from '@fdg/contracts';
+import type { ParticipantDefinition } from '@fdg/contracts';
 import { App, enterFullscreen, exitFullscreen } from '@fdg/tui';
 
 // Ensure data directory exists

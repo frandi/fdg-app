@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { SessionPhase, Utterance, Bid, BidEvaluation, SessionSummary } from '@fdg/types';
+import type { SessionPhase, Utterance, Bid, BidEvaluation, SessionSummary } from '@fdg/contracts';
 import type { EngineEventBus } from '@fdg/engine';
 
 export interface EngineState {

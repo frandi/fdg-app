@@ -1,5 +1,5 @@
-import type { Utterance } from '@fdg/types';
-import { UtteranceType } from '@fdg/types';
+import type { Utterance } from '@fdg/contracts';
+import { UtteranceType } from '@fdg/contracts';
 import type { ParticipantAgent } from '../agents/participant-agent.js';
 import type { TranscriptManager } from '../transcript/transcript-manager.js';
 import type { EngineEventBus } from '../event-bus.js';

@@ -1,4 +1,4 @@
-import type { ParticipantDefinition } from '@fdg/types';
+import type { ParticipantDefinition } from '@fdg/contracts';
 
 export function buildParticipantOpeningSystemPrompt(
   participant: ParticipantDefinition,

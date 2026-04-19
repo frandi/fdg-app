@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
-import type { ParticipantDefinition, HostDefinition, SessionConfig } from '@fdg/types';
+import type { ParticipantDefinition, HostDefinition, SessionConfig } from '@fdg/contracts';
 import type { Database } from '@fdg/db';
 import { PoolManageScreen } from './PoolManageScreen.js';
 import { ScrollableBox } from '../components/ScrollableBox.js';

@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fdg/types": "workspace:*",
+    "@fdg/contracts": "workspace:*",
     "@fdg/llm": "workspace:*",
     "@fdg/db": "workspace:*",
     "eventemitter3": "^5.0.1"

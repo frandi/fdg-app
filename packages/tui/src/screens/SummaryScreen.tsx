@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
-import type { SessionConfig, SessionSummary } from '@fdg/types';
+import type { SessionConfig, SessionSummary } from '@fdg/contracts';
 import type { Database } from '@fdg/db';
 import { SummaryView } from '../components/SummaryView.js';
 import { ScrollableBox } from '../components/ScrollableBox.js';

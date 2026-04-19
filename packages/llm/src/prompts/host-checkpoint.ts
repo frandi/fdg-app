@@ -1,4 +1,4 @@
-import type { HostDefinition, Whisper } from '@fdg/types';
+import type { HostDefinition, Whisper } from '@fdg/contracts';
 
 export function buildHostCheckpointSystemPrompt(host: HostDefinition): string {
   return `You are the host and facilitator of a focus group discussion.

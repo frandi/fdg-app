@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import type { ParticipantDefinition, Bid } from '@fdg/types';
+import type { ParticipantDefinition, Bid } from '@fdg/contracts';
 
 interface ParticipantListProps {
   participants: ParticipantDefinition[];

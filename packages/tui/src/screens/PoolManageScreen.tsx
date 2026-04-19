@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
-import type { ParticipantDefinition } from '@fdg/types';
-import { LlmProvider } from '@fdg/types';
+import type { ParticipantDefinition } from '@fdg/contracts';
+import { LlmProvider } from '@fdg/contracts';
 import type { Database } from '@fdg/db';
 import { ScrollableBox } from '../components/ScrollableBox.js';
 

@@ -1,4 +1,4 @@
-import type { ParticipantDefinition } from '@fdg/types';
+import type { ParticipantDefinition } from '@fdg/contracts';
 
 export function buildBidSystemPrompt(participant: ParticipantDefinition): string {
   return `You are ${participant.name}, participating in a focus group discussion.

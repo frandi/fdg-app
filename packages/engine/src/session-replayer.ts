@@ -1,5 +1,5 @@
 import type { Database, SessionEventRow } from '@fdg/db';
-import type { EngineEvents } from '@fdg/types';
+import type { EngineEvents } from '@fdg/contracts';
 import type { EngineEventBus } from './event-bus.js';
 
 export interface ReplayerOptions {

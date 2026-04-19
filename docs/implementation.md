@@ -44,7 +44,7 @@ fdg-app/
     FDG_App_Requirements.md
     implementation.md       ← this file
   packages/
-    types/                  @fdg/types
+    contracts/              @fdg/contracts
     llm/                    @fdg/llm
     db/                     @fdg/db
     engine/                 @fdg/engine
@@ -59,18 +59,18 @@ fdg-app/
   └── @fdg/tui
         └── @fdg/engine
               ├── @fdg/llm
-              │     └── @fdg/types
+              │     └── @fdg/contracts
               └── @fdg/db
-                    └── @fdg/types
+                    └── @fdg/contracts
 ```
 
-All packages depend on `@fdg/types`. No circular dependencies.
+All packages depend on `@fdg/contracts`. No circular dependencies.
 
 ---
 
 ## 4. Package Details
 
-### 4.1 `@fdg/types`
+### 4.1 `@fdg/contracts`
 
 Zero-runtime shared types. No dependencies.
 

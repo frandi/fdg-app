@@ -3,7 +3,7 @@ import type {
   LlmClientInterface,
   Utterance,
   Bid,
-} from '@fdg/types';
+} from '@fdg/contracts';
 import {
   buildBidSystemPrompt,
   buildBidUserPrompt,

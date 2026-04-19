@@ -4,7 +4,7 @@ import type {
   ParticipantDefinition,
   SessionSummary,
   Utterance,
-} from '@fdg/types';
+} from '@fdg/contracts';
 import type { SessionOrchestrator, EngineEventBus } from '@fdg/engine';
 import type { Database } from '@fdg/db';
 import { useEngine } from '../hooks/useEngine.js';

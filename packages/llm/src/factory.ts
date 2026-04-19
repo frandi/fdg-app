@@ -1,5 +1,5 @@
-import { LlmProvider } from '@fdg/types';
-import type { LlmClientInterface } from '@fdg/types';
+import { LlmProvider } from '@fdg/contracts';
+import type { LlmClientInterface } from '@fdg/contracts';
 import { OpenAIClient } from './openai-client.js';
 import { AnthropicClient } from './anthropic-client.js';
 

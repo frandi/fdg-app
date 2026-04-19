@@ -2,12 +2,12 @@ import {
   SessionPhase,
   UtteranceType,
   CheckpointAction,
-} from '@fdg/types';
+} from '@fdg/contracts';
 import type {
   LlmClientInterface,
   SessionConfig,
   SessionSummary,
-} from '@fdg/types';
+} from '@fdg/contracts';
 import { createLlmClient } from '@fdg/llm';
 import type { Database } from '@fdg/db';
 import { EngineEventBus } from './event-bus.js';

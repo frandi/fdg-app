@@ -5,7 +5,7 @@ import type {
   ParticipantDefinition,
   SessionUsage,
   UsageBucket,
-} from '@fdg/types';
+} from '@fdg/contracts';
 import type { Database } from '@fdg/db';
 import { ScrollableBox } from '../components/ScrollableBox.js';
 

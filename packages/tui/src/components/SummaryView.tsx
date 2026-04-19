@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import type { SessionSummary } from '@fdg/types';
+import type { SessionSummary } from '@fdg/contracts';
 
 interface SummaryViewProps {
   summary: SessionSummary;

@@ -1,4 +1,4 @@
-import type { Bid, BidEvaluation, Utterance, Whisper } from '@fdg/types';
+import type { Bid, BidEvaluation, Utterance, Whisper } from '@fdg/contracts';
 import type { HostAgent, TurnInfo } from '../agents/host-agent.js';
 import type { EngineEventBus } from '../event-bus.js';
 

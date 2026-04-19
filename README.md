@@ -24,7 +24,7 @@ See `docs/USER_MANUAL.md` for a step-by-step walkthrough, or `docs/FDG_App_Requi
 | `@fdg/engine` | Session orchestration, bid evaluation, host logic |
 | `@fdg/llm` | Provider adapters (OpenAI, Anthropic) |
 | `@fdg/db` | SQLite persistence (participant pool, sessions) |
-| `@fdg/types` | Shared types |
+| `@fdg/contracts` | Shared cross-boundary types |
 
 ## Try it
 
