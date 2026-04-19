@@ -1,4 +1,4 @@
-import type { Database, SessionEventRow } from '@fdg/db';
+import type { Database, SessionEventRow } from './db/index.js';
 import type { EngineEvents } from '@fdg/contracts';
 import type { EngineEventBus } from './event-bus.js';
 

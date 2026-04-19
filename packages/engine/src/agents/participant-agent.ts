@@ -13,7 +13,7 @@ import {
   buildParticipantOpeningUserPrompt,
   formatTranscript,
   bidSchema,
-} from '@fdg/llm';
+} from '../llm/index.js';
 
 interface RawBid {
   bidType: string;

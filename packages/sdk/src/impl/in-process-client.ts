@@ -8,11 +8,12 @@ import type {
   ParticipantDefinition,
   SessionUsage,
 } from '@fdg/contracts';
-import { Database, type SessionRow } from '@fdg/db';
 import {
+  Database,
   SessionOrchestrator,
   EngineEventBus,
   SessionReplayer,
+  type SessionRow,
 } from '@fdg/engine';
 import type {
   FdgClient,

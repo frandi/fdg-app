@@ -85,3 +85,10 @@ interface ReplayHandle {
   - 3h cli simplified — drops `@fdg/engine`/`@fdg/db`, no explicit `new Database(path)`; SDK owns db lifecycle (escape hatch `CreateClientOptions.database` kept for future use but unused now)
   - SDK re-exports `SessionRow` so TUI needs only `@fdg/sdk` + `@fdg/contracts`.
   - Live-session end-to-end TUI run pending user verification.
+- **🟢 Checkpoint 4** (db + llm absorbed into engine): `pnpm -r build` ✅, `pnpm -r typecheck` ✅, `pnpm --filter @fdg/sdk smoke` ✅.
+  - `packages/db/src/` → `packages/engine/src/db/`; `packages/llm/src/` → `packages/engine/src/llm/`.
+  - Internal imports rewritten to relative paths (`./db/index.js`, `../llm/index.js`).
+  - `packages/engine/package.json` absorbed `better-sqlite3`, `@types/better-sqlite3`, `openai`, `@anthropic-ai/sdk`.
+  - `packages/engine/src/index.ts` re-exports `Database`, `SessionRow`, `SessionEventRow`, `BidRow` for SDK.
+  - SDK imports switched from `@fdg/db` → `@fdg/engine`; `@fdg/db` dep removed from `packages/sdk/package.json`.
+  - `packages/db/` and `packages/llm/` deleted. Workspace is now: `contracts`, `engine`, `sdk`, `tui`, `cli` (5 packages).

@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@fdg/contracts": "workspace:*",
-    "@fdg/db": "workspace:*",
     "@fdg/engine": "workspace:*",
     "eventemitter3": "^5.0.1"
   },

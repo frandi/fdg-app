@@ -13,3 +13,6 @@ export { BidCollector } from './pipeline/bid-collector.js';
 export { BidEvaluator } from './pipeline/bid-evaluator.js';
 export { Speaker } from './pipeline/speaker.js';
 export { Checkpoint } from './pipeline/checkpoint.js';
+
+export { Database } from './db/index.js';
+export type { SessionRow, SessionEventRow, BidRow } from './db/index.js';

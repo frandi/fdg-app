@@ -24,7 +24,7 @@ import {
   evaluationSchema,
   checkpointSchema,
   summarySchema,
-} from '@fdg/llm';
+} from '../llm/index.js';
 
 export interface CheckpointResult {
   action: CheckpointAction;

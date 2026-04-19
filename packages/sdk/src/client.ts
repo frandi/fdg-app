@@ -6,7 +6,7 @@ import type {
   LlmProvider,
   SessionUsage,
 } from '@fdg/contracts';
-import type { Database, SessionRow } from '@fdg/db';
+import type { Database, SessionRow } from '@fdg/engine';
 import type { EngineEventStream } from './events.js';
 
 export interface ReplayOptions {

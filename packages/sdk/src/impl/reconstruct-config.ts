@@ -1,5 +1,5 @@
 import type { SessionConfig, ParticipantDefinition } from '@fdg/contracts';
-import type { SessionRow } from '@fdg/db';
+import type { SessionRow } from '@fdg/engine';
 
 export function reconstructConfig(
   row: SessionRow,

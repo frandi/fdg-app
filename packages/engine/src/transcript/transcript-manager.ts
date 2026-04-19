@@ -1,6 +1,6 @@
 import type { Utterance, UtteranceType } from '@fdg/contracts';
-import type { Database } from '@fdg/db';
-import { formatTranscript } from '@fdg/llm';
+import type { Database } from '../db/index.js';
+import { formatTranscript } from '../llm/index.js';
 import { buildContextWindow } from './context-window.js';
 
 const DEFAULT_MAX_TOKENS = 16000;

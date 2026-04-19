@@ -61,48 +61,7 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  packages/db:
-    dependencies:
-      '@fdg/contracts':
-        specifier: workspace:*
-        version: link:../contracts
-      better-sqlite3:
-        specifier: ^11.8.0
-        version: 11.10.0
-    devDependencies:
-      '@types/better-sqlite3':
-        specifier: ^7.6.12
-        version: 7.6.13
-      tsup:
-        specifier: ^8.4.0
-        version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.7.0
-        version: 5.9.3
-
   packages/engine:
-    dependencies:
-      '@fdg/contracts':
-        specifier: workspace:*
-        version: link:../contracts
-      '@fdg/db':
-        specifier: workspace:*
-        version: link:../db
-      '@fdg/llm':
-        specifier: workspace:*
-        version: link:../llm
-      eventemitter3:
-        specifier: ^5.0.1
-        version: 5.0.4
-    devDependencies:
-      tsup:
-        specifier: ^8.4.0
-        version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.7.0
-        version: 5.9.3
-
-  packages/llm:
     dependencies:
       '@anthropic-ai/sdk':
         specifier: ^0.39.0
@@ -110,10 +69,19 @@ importers:
       '@fdg/contracts':
         specifier: workspace:*
         version: link:../contracts
+      better-sqlite3:
+        specifier: ^11.8.0
+        version: 11.10.0
+      eventemitter3:
+        specifier: ^5.0.1
+        version: 5.0.4
       openai:
         specifier: ^4.80.0
         version: 4.104.0(ws@8.20.0)
     devDependencies:
+      '@types/better-sqlite3':
+        specifier: ^7.6.12
+        version: 7.6.13
       tsup:
         specifier: ^8.4.0
         version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)
@@ -126,9 +94,6 @@ importers:
       '@fdg/contracts':
         specifier: workspace:*
         version: link:../contracts
-      '@fdg/db':
-        specifier: workspace:*
-        version: link:../db
       '@fdg/engine':
         specifier: workspace:*
         version: link:../engine

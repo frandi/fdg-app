@@ -8,8 +8,8 @@ import type {
   SessionConfig,
   SessionSummary,
 } from '@fdg/contracts';
-import { createLlmClient } from '@fdg/llm';
-import type { Database } from '@fdg/db';
+import { createLlmClient } from './llm/index.js';
+import type { Database } from './db/index.js';
 import { EngineEventBus } from './event-bus.js';
 import { HostAgent } from './agents/host-agent.js';
 import { ParticipantAgent } from './agents/participant-agent.js';
