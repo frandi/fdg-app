@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 import TextInput from 'ink-text-input';
-import type { ParticipantDefinition } from '@fdg/types';
-import { LlmProvider } from '@fdg/types';
-import type { Database } from '@fdg/db';
+import type { ParticipantDefinition } from '@fdg/contracts';
+import { LlmProvider } from '@fdg/contracts';
+import type { ParticipantPoolApi } from '@fdg/sdk';
 import { ScrollableBox } from '../components/ScrollableBox.js';
 
 interface PoolManageScreenProps {
-  db: Database;
+  pool: ParticipantPoolApi;
   onDone: (participants: ParticipantDefinition[]) => void;
 }
 
@@ -23,9 +23,9 @@ function toggleProvider(current: LlmProvider): LlmProvider {
   return current === LlmProvider.OpenAI ? LlmProvider.Anthropic : LlmProvider.OpenAI;
 }
 
-export function PoolManageScreen({ db, onDone }: PoolManageScreenProps) {
+export function PoolManageScreen({ pool, onDone }: PoolManageScreenProps) {
   const [participants, setParticipants] = useState<ParticipantDefinition[]>(
-    () => db.participants.getAll(),
+    () => pool.list(),
   );
   const [cursor, setCursor] = useState(0);
   const [mode, setMode] = useState<Mode>('list');
@@ -40,7 +40,7 @@ export function PoolManageScreen({ db, onDone }: PoolManageScreenProps) {
   const [formError, setFormError] = useState('');
 
   const refresh = () => {
-    const updated = db.participants.getAll();
+    const updated = pool.list();
     setParticipants(updated);
     setCursor((prev) => Math.min(prev, Math.max(0, updated.length - 1)));
   };
@@ -79,19 +79,19 @@ export function PoolManageScreen({ db, onDone }: PoolManageScreenProps) {
       return;
     }
     if (editingId) {
-      db.participants.update(editingId, {
+      pool.update(editingId, {
         name: formName.trim(),
         persona: formPersona.trim(),
         llmProvider: formProvider,
         llmModel: formModel.trim(),
       });
     } else {
-      db.participants.create(
-        formName.trim(),
-        formPersona.trim(),
-        formProvider,
-        formModel.trim(),
-      );
+      pool.create({
+        name: formName.trim(),
+        persona: formPersona.trim(),
+        llmProvider: formProvider,
+        llmModel: formModel.trim(),
+      });
     }
     refresh();
     resetForm();
@@ -132,7 +132,7 @@ export function PoolManageScreen({ db, onDone }: PoolManageScreenProps) {
       if (input === 'y') {
         const p = participants[cursor];
         if (p) {
-          db.participants.delete(p.id);
+          pool.delete(p.id);
           refresh();
         }
         setMode('list');

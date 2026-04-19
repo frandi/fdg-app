@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Box, Text, useInput } from 'ink';
-import type { SessionConfig, SessionSummary } from '@fdg/types';
-import type { Database } from '@fdg/db';
+import type { SessionConfig, SessionSummary } from '@fdg/contracts';
+import type { FdgClient } from '@fdg/sdk';
 import { SummaryView } from '../components/SummaryView.js';
 import { ScrollableBox } from '../components/ScrollableBox.js';
 import { exportSession } from '../utils/export.js';
 
 interface SummaryScreenProps {
-  db: Database;
+  client: FdgClient;
   sessionId: string;
   config: SessionConfig;
   summary: SessionSummary;
@@ -15,7 +15,7 @@ interface SummaryScreenProps {
 }
 
 export function SummaryScreen({
-  db,
+  client,
   sessionId,
   config,
   summary,
@@ -31,7 +31,7 @@ export function SummaryScreen({
     }
     if (input === 'e' && !exportPath && !exportError) {
       try {
-        const utterances = db.utterances.getBySession(sessionId);
+        const utterances = client.getTranscript(sessionId);
         const path = exportSession(sessionId, config, summary, utterances);
         setExportPath(path);
       } catch (err) {

@@ -11,10 +11,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fdg/db": "workspace:*",
-    "@fdg/engine": "workspace:*",
+    "@fdg/contracts": "workspace:*",
+    "@fdg/sdk": "workspace:*",
     "@fdg/tui": "workspace:*",
-    "@fdg/types": "workspace:*",
     "dotenv": "^16.4.0",
     "ink": "^6.8.0",
     "react": "^19.2.5"

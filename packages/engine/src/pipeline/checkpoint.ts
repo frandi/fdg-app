@@ -1,5 +1,5 @@
-import type { Utterance, Whisper } from '@fdg/types';
-import { UtteranceType, CheckpointAction } from '@fdg/types';
+import type { Utterance, Whisper } from '@fdg/contracts';
+import { UtteranceType, CheckpointAction } from '@fdg/contracts';
 import type { HostAgent, CheckpointResult, TurnInfo } from '../agents/host-agent.js';
 import type { TranscriptManager } from '../transcript/transcript-manager.js';
 import type { EngineEventBus } from '../event-bus.js';

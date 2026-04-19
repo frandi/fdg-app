@@ -1,13 +1,13 @@
 import type {
   HostDefinition,
-  LlmClientInterface,
   Utterance,
   Bid,
   BidEvaluation,
   Whisper,
   SessionSummary,
   CheckpointAction,
-} from '@fdg/types';
+} from '@fdg/contracts';
+import type { LlmClientInterface } from '../internal-types.js';
 import {
   buildHostOpeningSystemPrompt,
   buildHostOpeningUserPrompt,
@@ -24,7 +24,7 @@ import {
   evaluationSchema,
   checkpointSchema,
   summarySchema,
-} from '@fdg/llm';
+} from '../llm/index.js';
 
 export interface CheckpointResult {
   action: CheckpointAction;

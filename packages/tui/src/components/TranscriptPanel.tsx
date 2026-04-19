@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import type { Utterance } from '@fdg/types';
-import { UtteranceType } from '@fdg/types';
+import type { Utterance } from '@fdg/contracts';
+import { UtteranceType } from '@fdg/contracts';
 import { ScrollableBox } from './ScrollableBox.js';
 
 interface TranscriptPanelProps {

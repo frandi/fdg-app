@@ -16,9 +16,8 @@
   },
   "dependencies": {
     "@byteland/ink-scroll-bar": "^1.0.0",
-    "@fdg/db": "workspace:*",
-    "@fdg/engine": "workspace:*",
-    "@fdg/types": "workspace:*",
+    "@fdg/contracts": "workspace:*",
+    "@fdg/sdk": "workspace:*",
     "ink": "^6.8.0",
     "ink-scroll-view": "^0.3.6",
     "ink-text-input": "^6.0.0",

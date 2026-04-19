@@ -1,7 +1,7 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import type { SessionConfig, SessionSummary, Utterance } from '@fdg/types';
+import type { SessionConfig, SessionSummary, Utterance } from '@fdg/contracts';
 
 function formatMarkdown(
   config: SessionConfig,

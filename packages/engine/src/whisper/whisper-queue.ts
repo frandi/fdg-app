@@ -1,5 +1,5 @@
-import type { Whisper } from '@fdg/types';
-import type { Database } from '@fdg/db';
+import type { Whisper } from '@fdg/contracts';
+import type { Database } from '../db/index.js';
 
 export class WhisperQueue {
   constructor(

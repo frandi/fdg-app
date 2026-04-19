@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import type { BidEvaluation } from '@fdg/types';
+import type { BidEvaluation } from '@fdg/contracts';
 
 interface SpeakerBannerProps {
   evaluation: BidEvaluation | null;

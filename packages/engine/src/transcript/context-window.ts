@@ -1,5 +1,5 @@
-import type { Utterance } from '@fdg/types';
-import { UtteranceType } from '@fdg/types';
+import type { Utterance } from '@fdg/contracts';
+import { UtteranceType } from '@fdg/contracts';
 
 const OPENING_TYPES = new Set<string>([
   UtteranceType.HostOpening,

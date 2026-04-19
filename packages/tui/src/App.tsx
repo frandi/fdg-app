@@ -4,9 +4,8 @@ import type {
   SessionConfig,
   SessionSummary,
   ParticipantDefinition,
-} from '@fdg/types';
-import { SessionOrchestrator, EngineEventBus } from '@fdg/engine';
-import type { Database, SessionRow } from '@fdg/db';
+} from '@fdg/contracts';
+import type { FdgClient, SessionHandle, SessionRow } from '@fdg/sdk';
 import { ConfigScreen } from './screens/ConfigScreen.js';
 import { DiscussionScreen } from './screens/DiscussionScreen.js';
 import { SummaryScreen } from './screens/SummaryScreen.js';
@@ -25,30 +24,13 @@ type AppPhase =
   | 'usage';
 
 interface AppProps {
-  db: Database;
+  client: FdgClient;
   availableParticipants: ParticipantDefinition[];
   initialCompletedSessions?: SessionRow[];
 }
 
-function reconstructConfig(
-  row: SessionRow,
-  participants: ParticipantDefinition[],
-): SessionConfig {
-  return {
-    topic: row.topic,
-    goal: row.goal,
-    turnLimit: row.turnLimit,
-    host: {
-      persona: row.hostPersona,
-      llmProvider: row.hostLlmProvider as ParticipantDefinition['llmProvider'],
-      llmModel: row.hostLlmModel,
-    },
-    participants,
-  };
-}
-
 export function App({
-  db,
+  client,
   availableParticipants,
   initialCompletedSessions = [],
 }: AppProps) {
@@ -59,8 +41,7 @@ export function App({
   );
   const [completedSessions] = useState<SessionRow[]>(initialCompletedSessions);
   const [participants, setParticipants] = useState<ParticipantDefinition[]>(availableParticipants);
-  const [orchestrator, setOrchestrator] = useState<SessionOrchestrator | null>(null);
-  const [eventBus, setEventBus] = useState<EngineEventBus | null>(null);
+  const [sessionHandle, setSessionHandle] = useState<SessionHandle | null>(null);
   const [config, setConfig] = useState<SessionConfig | null>(null);
   const [summary, setSummary] = useState<SessionSummary | null>(null);
 
@@ -70,19 +51,17 @@ export function App({
 
   const handleStart = useCallback(
     (sessionConfig: SessionConfig) => {
-      const bus = new EngineEventBus();
-      const orch = new SessionOrchestrator(sessionConfig, db, bus);
+      const handle = client.startSession(sessionConfig);
 
       setConfig(sessionConfig);
-      setEventBus(bus);
-      setOrchestrator(orch);
+      setSessionHandle(handle);
       setPhase('discussion');
 
-      orch.run().catch((err: Error) => {
+      handle.wait().catch((err: Error) => {
         console.error('Session failed:', err.message);
       });
     },
-    [db],
+    [client],
   );
 
   const handleSessionCompleted = useCallback((sessionSummary: SessionSummary) => {
@@ -107,22 +86,15 @@ export function App({
 
   const handleResumeSession = useCallback(
     (sessionId: string) => {
-      const row = db.sessions.getById(sessionId);
-      if (!row) return;
-      const sessionParticipants = db.sessions.getParticipants(sessionId);
-      const reconstructed = reconstructConfig(row, sessionParticipants);
+      const resumed = client.resumeSession(sessionId);
+      if (!resumed) return;
 
-      const summaryJson = db.summaryReports.getBySession(sessionId);
-      const parsedSummary = summaryJson
-        ? (JSON.parse(summaryJson) as SessionSummary)
-        : null;
-
-      setResumedSessionId(sessionId);
-      setResumedConfig(reconstructed);
-      setResumedSummary(parsedSummary);
+      setResumedSessionId(resumed.sessionId);
+      setResumedConfig(resumed.config);
+      setResumedSummary(resumed.summary);
       setPhase('resumed');
     },
-    [db],
+    [client],
   );
 
   const handleStartNewFromBrowser = useCallback(() => {
@@ -136,7 +108,7 @@ export function App({
     setPhase('sessionBrowser');
   }, []);
 
-  const activeSessionId = orchestrator?.getSessionId() ?? resumedSessionId;
+  const activeSessionId = sessionHandle?.sessionId ?? resumedSessionId;
   const activeConfig = config ?? resumedConfig;
   const activeSummary = summary ?? resumedSummary;
 
@@ -159,7 +131,7 @@ export function App({
           </Text>
           <ConfigScreen
             availableParticipants={participants}
-            db={db}
+            pool={client.participants}
             onParticipantsChanged={setParticipants}
             onStart={handleStart}
           />
@@ -167,15 +139,16 @@ export function App({
       );
     }
 
-    if (phase === 'discussion' && orchestrator && eventBus && config) {
+    if (phase === 'discussion' && sessionHandle && config) {
       return (
         <DiscussionScreen
-          orchestrator={orchestrator}
-          eventBus={eventBus}
+          events={sessionHandle.events}
+          submitWhisper={sessionHandle.submitWhisper}
+          respondToTurnLimit={sessionHandle.respondToTurnLimit}
           participants={config.participants}
           turnLimit={config.turnLimit}
-          db={db}
-          sessionId={orchestrator.getSessionId()}
+          client={client}
+          sessionId={sessionHandle.sessionId}
           concludedSummary={summary}
           onSessionCompleted={handleSessionCompleted}
           onRequestSummary={handleRequestSummary}
@@ -188,11 +161,10 @@ export function App({
     if (phase === 'resumed' && resumedSessionId && resumedConfig && resumedSummary) {
       return (
         <DiscussionScreen
-          orchestrator={null}
-          eventBus={null}
+          events={null}
           participants={resumedConfig.participants}
           turnLimit={resumedConfig.turnLimit}
-          db={db}
+          client={client}
           sessionId={resumedSessionId}
           concludedSummary={resumedSummary}
           readOnly
@@ -207,7 +179,7 @@ export function App({
     if (phase === 'summary' && activeSessionId && activeConfig && activeSummary) {
       return (
         <SummaryScreen
-          db={db}
+          client={client}
           sessionId={activeSessionId}
           config={activeConfig}
           summary={activeSummary}
@@ -219,7 +191,7 @@ export function App({
     if (phase === 'replay' && activeSessionId && activeConfig) {
       return (
         <ReplayScreen
-          db={db}
+          client={client}
           sessionId={activeSessionId}
           participants={activeConfig.participants}
           turnLimit={activeConfig.turnLimit}
@@ -231,7 +203,7 @@ export function App({
     if (phase === 'usage' && activeSessionId && activeConfig) {
       return (
         <UsageScreen
-          db={db}
+          client={client}
           sessionId={activeSessionId}
           participants={activeConfig.participants}
           onExit={handleBackFromOverlay}

@@ -21,10 +21,20 @@ See `docs/USER_MANUAL.md` for a step-by-step walkthrough, or `docs/FDG_App_Requi
 |---|---|
 | `@fdg/cli` | Entry point — binary `fdg` |
 | `@fdg/tui` | Terminal UI (Ink + React) |
-| `@fdg/engine` | Session orchestration, bid evaluation, host logic |
-| `@fdg/llm` | Provider adapters (OpenAI, Anthropic) |
-| `@fdg/db` | SQLite persistence (participant pool, sessions) |
-| `@fdg/types` | Shared types |
+| `@fdg/sdk` | Public API surface — the only way UIs talk to the engine |
+| `@fdg/engine` | Session orchestration, bid evaluation, host logic (embeds SQLite persistence + LLM adapters) |
+| `@fdg/contracts` | Shared cross-boundary types |
+
+### Architecture
+
+```
+  cli ──▶ tui ──▶ sdk ──▶ engine ─┬─ db (internal)
+                                  └─ llm (internal)
+           │                        │
+           └─────▶ contracts ◀──────┘
+```
+
+UIs (tui, future web/mobile) depend only on `@fdg/sdk` and `@fdg/contracts`. The SDK owns engine construction, the event bus, and the database lifecycle, so alternate transports (e.g. WebSocket) can reimplement it without touching engine internals. See `packages/sdk/README.md` for the API.
 
 ## Try it
 

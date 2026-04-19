@@ -15,12 +15,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fdg/types": "workspace:*",
-    "@fdg/llm": "workspace:*",
-    "@fdg/db": "workspace:*",
-    "eventemitter3": "^5.0.1"
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@fdg/contracts": "workspace:*",
+    "better-sqlite3": "^11.8.0",
+    "eventemitter3": "^5.0.1",
+    "openai": "^4.80.0"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
     "tsup": "^8.4.0",
     "typescript": "^5.7.0"
   }

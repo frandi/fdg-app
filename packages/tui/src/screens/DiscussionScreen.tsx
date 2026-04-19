@@ -4,9 +4,8 @@ import type {
   ParticipantDefinition,
   SessionSummary,
   Utterance,
-} from '@fdg/types';
-import type { SessionOrchestrator, EngineEventBus } from '@fdg/engine';
-import type { Database } from '@fdg/db';
+} from '@fdg/contracts';
+import type { EngineEventStream, FdgClient } from '@fdg/sdk';
 import { useEngine } from '../hooks/useEngine.js';
 import { TranscriptPanel } from '../components/TranscriptPanel.js';
 import { ParticipantList } from '../components/ParticipantList.js';
@@ -17,11 +16,12 @@ import { TurnLimitPrompt } from '../components/TurnLimitPrompt.js';
 import { ConcludedBanner } from '../components/ConcludedBanner.js';
 
 interface DiscussionScreenProps {
-  orchestrator: SessionOrchestrator | null;
-  eventBus: EngineEventBus | null;
+  events: EngineEventStream | null;
+  submitWhisper?: (message: string) => void;
+  respondToTurnLimit?: (action: 'conclude' | 'extend', extraTurns?: number) => void;
   participants: ParticipantDefinition[];
   turnLimit: number;
-  db: Database;
+  client: FdgClient;
   sessionId: string;
   concludedSummary: SessionSummary | null;
   readOnly?: boolean;
@@ -33,11 +33,12 @@ interface DiscussionScreenProps {
 }
 
 export function DiscussionScreen({
-  orchestrator,
-  eventBus,
+  events,
+  submitWhisper,
+  respondToTurnLimit,
   participants,
   turnLimit,
-  db,
+  client,
   sessionId,
   concludedSummary,
   readOnly = false,
@@ -47,7 +48,7 @@ export function DiscussionScreen({
   onRequestUsage,
   onExit,
 }: DiscussionScreenProps) {
-  const engine = useEngine(eventBus, turnLimit);
+  const engine = useEngine(events, turnLimit);
   const participantNames = new Map(participants.map((p) => [p.id, p.name]));
   participantNames.set('host', 'Host');
 
@@ -55,12 +56,12 @@ export function DiscussionScreen({
   React.useEffect(() => {
     if (concludedSummary && engine.transcript.length === 0 && hydrated === null) {
       try {
-        setHydrated(db.utterances.getBySession(sessionId));
+        setHydrated(client.getTranscript(sessionId));
       } catch {
         setHydrated([]);
       }
     }
-  }, [concludedSummary, engine.transcript.length, hydrated, db, sessionId]);
+  }, [concludedSummary, engine.transcript.length, hydrated, client, sessionId]);
 
   const concluded = readOnly || engine.summary !== null || concludedSummary !== null;
   const displayedTranscript =
@@ -130,7 +131,7 @@ export function DiscussionScreen({
             currentTurn={engine.currentTurn}
             turnLimit={engine.turnLimit}
             onRespond={(action, extraTurns) => {
-              orchestrator?.respondToTurnLimit(action, extraTurns);
+              respondToTurnLimit?.(action, extraTurns);
             }}
           />
         )}
@@ -139,7 +140,7 @@ export function DiscussionScreen({
           <ConcludedBanner />
         ) : (
           <WhisperInput
-            onSubmit={(message) => orchestrator?.submitWhisper(message)}
+            onSubmit={(message) => submitWhisper?.(message)}
             acknowledged={engine.whisperAcknowledged}
           />
         )}

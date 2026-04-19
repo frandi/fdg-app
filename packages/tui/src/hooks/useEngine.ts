@@ -1,6 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { SessionPhase, Utterance, Bid, BidEvaluation, SessionSummary } from '@fdg/types';
-import type { EngineEventBus } from '@fdg/engine';
+import type {
+  SessionPhase,
+  Utterance,
+  Bid,
+  BidEvaluation,
+  SessionSummary,
+  EngineEvents,
+} from '@fdg/contracts';
+import type { EngineEventStream } from '@fdg/sdk';
 
 export interface EngineState {
   phase: SessionPhase | null;
@@ -16,7 +23,7 @@ export interface EngineState {
   error: string | null;
 }
 
-export function useEngine(eventBus: EngineEventBus | null, turnLimit: number) {
+export function useEngine(events: EngineEventStream | null, turnLimit: number) {
   const [state, setState] = useState<EngineState>({
     phase: null,
     transcript: [],
@@ -36,97 +43,99 @@ export function useEngine(eventBus: EngineEventBus | null, turnLimit: number) {
   }, []);
 
   useEffect(() => {
-    if (!eventBus) return;
+    if (!events) return;
 
-    const handlers = {
-      'phase:changed': ({ phase }: { phase: SessionPhase }) => {
-        setState((prev) => ({ ...prev, phase }));
-      },
-      'host:speaking': ({ chunk }: { chunk: string }) => {
-        setState((prev) => ({
-          ...prev,
-          streamingText: {
-            speakerId: 'host',
-            text: (prev.streamingText?.speakerId === 'host' ? prev.streamingText.text : '') + chunk,
-          },
-        }));
-      },
-      'host:spoke': ({ utterance }: { utterance: Utterance }) => {
-        setState((prev) => ({
-          ...prev,
-          transcript: [...prev.transcript, utterance],
-          streamingText: null,
-        }));
-      },
-      'participant:opening': ({ participantId, chunk }: { participantId: string; chunk: string }) => {
-        setState((prev) => ({
-          ...prev,
-          streamingText: {
-            speakerId: participantId,
-            text: (prev.streamingText?.speakerId === participantId ? prev.streamingText.text : '') + chunk,
-          },
-        }));
-      },
-      'participant:opened': ({ utterance }: { participantId: string; utterance: Utterance }) => {
-        setState((prev) => ({
-          ...prev,
-          transcript: [...prev.transcript, utterance],
-          streamingText: null,
-        }));
-      },
-      'bid:collecting': () => {
-        setState((prev) => ({ ...prev, bids: [], selectedSpeaker: null }));
-      },
-      'bid:received': ({ bid }: { participantId: string; bid: Bid }) => {
-        setState((prev) => ({ ...prev, bids: [...prev.bids, bid] }));
-      },
-      'host:selected': (evaluation: BidEvaluation) => {
-        setState((prev) => ({ ...prev, selectedSpeaker: evaluation }));
-      },
-      'participant:speaking': ({ participantId, chunk }: { participantId: string; chunk: string }) => {
-        setState((prev) => ({
-          ...prev,
-          streamingText: {
-            speakerId: participantId,
-            text: (prev.streamingText?.speakerId === participantId ? prev.streamingText.text : '') + chunk,
-          },
-        }));
-      },
-      'participant:spoke': ({ utterance }: { participantId: string; utterance: Utterance }) => {
-        setState((prev) => ({
-          ...prev,
-          transcript: [...prev.transcript, utterance],
-          streamingText: null,
-          currentTurn: prev.currentTurn + 1,
-        }));
-      },
-      'turnLimit:reached': ({ currentTurn, limit }: { currentTurn: number; limit: number }) => {
-        setState((prev) => ({
-          ...prev,
-          turnLimitReached: true,
-          currentTurn,
-          turnLimit: limit,
-        }));
-      },
-      'whisper:acknowledged': () => {
-        setState((prev) => ({ ...prev, whisperAcknowledged: true }));
-      },
-      'session:completed': ({ summary }: { summary: SessionSummary }) => {
-        setState((prev) => ({ ...prev, summary }));
-      },
-      'error': ({ message }: { message: string; fatal: boolean }) => {
-        setState((prev) => ({ ...prev, error: message }));
-      },
-    } as const;
+    const unsubscribers: Array<() => void> = [];
+    const subscribe = <K extends keyof EngineEvents>(
+      event: K,
+      listener: (...args: EngineEvents[K] extends readonly unknown[] ? EngineEvents[K] : never) => void,
+    ) => {
+      unsubscribers.push(events.on(event, listener));
+    };
 
-    for (const [event, handler] of Object.entries(handlers)) {
-      eventBus.on(event as keyof typeof handlers, handler as (...args: unknown[]) => void);
-    }
+    subscribe('phase:changed', ({ phase }) => {
+      setState((prev) => ({ ...prev, phase }));
+    });
+    subscribe('host:speaking', ({ chunk }) => {
+      setState((prev) => ({
+        ...prev,
+        streamingText: {
+          speakerId: 'host',
+          text: (prev.streamingText?.speakerId === 'host' ? prev.streamingText.text : '') + chunk,
+        },
+      }));
+    });
+    subscribe('host:spoke', ({ utterance }) => {
+      setState((prev) => ({
+        ...prev,
+        transcript: [...prev.transcript, utterance],
+        streamingText: null,
+      }));
+    });
+    subscribe('participant:opening', ({ participantId, chunk }) => {
+      setState((prev) => ({
+        ...prev,
+        streamingText: {
+          speakerId: participantId,
+          text: (prev.streamingText?.speakerId === participantId ? prev.streamingText.text : '') + chunk,
+        },
+      }));
+    });
+    subscribe('participant:opened', ({ utterance }) => {
+      setState((prev) => ({
+        ...prev,
+        transcript: [...prev.transcript, utterance],
+        streamingText: null,
+      }));
+    });
+    subscribe('bid:collecting', () => {
+      setState((prev) => ({ ...prev, bids: [], selectedSpeaker: null }));
+    });
+    subscribe('bid:received', ({ bid }) => {
+      setState((prev) => ({ ...prev, bids: [...prev.bids, bid] }));
+    });
+    subscribe('host:selected', (evaluation) => {
+      setState((prev) => ({ ...prev, selectedSpeaker: evaluation }));
+    });
+    subscribe('participant:speaking', ({ participantId, chunk }) => {
+      setState((prev) => ({
+        ...prev,
+        streamingText: {
+          speakerId: participantId,
+          text: (prev.streamingText?.speakerId === participantId ? prev.streamingText.text : '') + chunk,
+        },
+      }));
+    });
+    subscribe('participant:spoke', ({ utterance }) => {
+      setState((prev) => ({
+        ...prev,
+        transcript: [...prev.transcript, utterance],
+        streamingText: null,
+        currentTurn: prev.currentTurn + 1,
+      }));
+    });
+    subscribe('turnLimit:reached', ({ currentTurn, limit }) => {
+      setState((prev) => ({
+        ...prev,
+        turnLimitReached: true,
+        currentTurn,
+        turnLimit: limit,
+      }));
+    });
+    subscribe('whisper:acknowledged', () => {
+      setState((prev) => ({ ...prev, whisperAcknowledged: true }));
+    });
+    subscribe('session:completed', ({ summary }) => {
+      setState((prev) => ({ ...prev, summary }));
+    });
+    subscribe('error', ({ message }) => {
+      setState((prev) => ({ ...prev, error: message }));
+    });
 
     return () => {
-      eventBus.removeAllListeners();
+      for (const unsub of unsubscribers) unsub();
     };
-  }, [eventBus]);
+  }, [events]);
 
   return { ...state, resetWhisperAck };
 }

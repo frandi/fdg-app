@@ -2,14 +2,11 @@ import {
   SessionPhase,
   UtteranceType,
   CheckpointAction,
-} from '@fdg/types';
-import type {
-  LlmClientInterface,
-  SessionConfig,
-  SessionSummary,
-} from '@fdg/types';
-import { createLlmClient } from '@fdg/llm';
-import type { Database } from '@fdg/db';
+} from '@fdg/contracts';
+import type { SessionConfig, SessionSummary } from '@fdg/contracts';
+import type { LlmClientInterface } from './internal-types.js';
+import { createLlmClient } from './llm/index.js';
+import type { Database } from './db/index.js';
 import { EngineEventBus } from './event-bus.js';
 import { HostAgent } from './agents/host-agent.js';
 import { ParticipantAgent } from './agents/participant-agent.js';
@@ -91,6 +88,58 @@ export class SessionOrchestrator {
         ...record,
       });
     });
+  }
+
+  /**
+   * Resolve the host's selectedParticipantId against live agents. LLMs
+   * occasionally return the participant's name, a lowercased id, or a
+   * mangled uuid; fall back to fuzzy matching and finally the first bidder
+   * so a noisy facilitation response doesn't waste a turn.
+   */
+  private resolveSelectedParticipant(
+    selected: string,
+    bids: Array<{ participantId: string }>,
+  ): ParticipantAgent | null {
+    if (this.participantAgents.length === 0) return null;
+
+    const byId = this.participantAgents.find(
+      (a) => a.definition.id === selected,
+    );
+    if (byId) return byId;
+
+    const needle = selected.trim().toLowerCase();
+    if (!needle) return null;
+
+    const bidderIds = new Set(bids.map((b) => b.participantId));
+    const bidders = this.participantAgents.filter((a) =>
+      bidderIds.has(a.definition.id),
+    );
+    const candidates = bidders.length > 0 ? bidders : this.participantAgents;
+
+    const byIdCi = candidates.find(
+      (a) => a.definition.id.toLowerCase() === needle,
+    );
+    if (byIdCi) return byIdCi;
+
+    const byName = candidates.find(
+      (a) => a.definition.name.toLowerCase() === needle,
+    );
+    if (byName) return byName;
+
+    const byFirstName = candidates.find((a) => {
+      const first = a.definition.name.split(/\s+/)[0]?.toLowerCase();
+      return first && first === needle;
+    });
+    if (byFirstName) return byFirstName;
+
+    const byContains = candidates.find(
+      (a) =>
+        a.definition.name.toLowerCase().includes(needle) ||
+        needle.includes(a.definition.name.toLowerCase()),
+    );
+    if (byContains) return byContains;
+
+    return candidates[0] ?? null;
   }
 
   private attachEventPersister(): void {
@@ -252,19 +301,21 @@ export class SessionOrchestrator {
       }
 
       // Step 3: Speaking Turn
-      const selectedAgent = this.participantAgents.find(
-        (a) => a.definition.id === evaluation.selectedParticipantId,
+      const resolved = this.resolveSelectedParticipant(
+        evaluation.selectedParticipantId,
+        bids,
       );
-      if (!selectedAgent) {
+      if (!resolved) {
         this.eventBus.emit('error', {
           message: `Host selected unknown participant: ${evaluation.selectedParticipantId}`,
           fatal: false,
         });
         continue;
       }
+      const selectedAgent = resolved;
 
       const selectedBid = bids.find(
-        (b) => b.participantId === evaluation.selectedParticipantId,
+        (b) => b.participantId === selectedAgent.definition.id,
       );
       await this.speaker.speak(
         selectedAgent,

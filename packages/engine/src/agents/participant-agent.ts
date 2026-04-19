@@ -1,9 +1,5 @@
-import type {
-  ParticipantDefinition,
-  LlmClientInterface,
-  Utterance,
-  Bid,
-} from '@fdg/types';
+import type { ParticipantDefinition, Utterance, Bid } from '@fdg/contracts';
+import type { LlmClientInterface } from '../internal-types.js';
 import {
   buildBidSystemPrompt,
   buildBidUserPrompt,
@@ -13,7 +9,7 @@ import {
   buildParticipantOpeningUserPrompt,
   formatTranscript,
   bidSchema,
-} from '@fdg/llm';
+} from '../llm/index.js';
 
 interface RawBid {
   bidType: string;

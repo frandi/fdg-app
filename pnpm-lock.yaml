@@ -20,18 +20,15 @@ importers:
 
   packages/cli:
     dependencies:
-      '@fdg/db':
+      '@fdg/contracts':
         specifier: workspace:*
-        version: link:../db
-      '@fdg/engine':
+        version: link:../contracts
+      '@fdg/sdk':
         specifier: workspace:*
-        version: link:../engine
+        version: link:../sdk
       '@fdg/tui':
         specifier: workspace:*
         version: link:../tui
-      '@fdg/types':
-        specifier: workspace:*
-        version: link:../types
       dotenv:
         specifier: ^16.4.0
         version: 16.6.1
@@ -55,14 +52,32 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  packages/db:
+  packages/contracts:
+    devDependencies:
+      tsup:
+        specifier: ^8.4.0
+        version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+
+  packages/engine:
     dependencies:
-      '@fdg/types':
+      '@anthropic-ai/sdk':
+        specifier: ^0.39.0
+        version: 0.39.0
+      '@fdg/contracts':
         specifier: workspace:*
-        version: link:../types
+        version: link:../contracts
       better-sqlite3:
         specifier: ^11.8.0
         version: 11.10.0
+      eventemitter3:
+        specifier: ^5.0.1
+        version: 5.0.4
+      openai:
+        specifier: ^4.80.0
+        version: 4.104.0(ws@8.20.0)
     devDependencies:
       '@types/better-sqlite3':
         specifier: ^7.6.12
@@ -74,17 +89,14 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  packages/engine:
+  packages/sdk:
     dependencies:
-      '@fdg/db':
+      '@fdg/contracts':
         specifier: workspace:*
-        version: link:../db
-      '@fdg/llm':
+        version: link:../contracts
+      '@fdg/engine':
         specifier: workspace:*
-        version: link:../llm
-      '@fdg/types':
-        specifier: workspace:*
-        version: link:../types
+        version: link:../engine
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.4
@@ -92,25 +104,9 @@ importers:
       tsup:
         specifier: ^8.4.0
         version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.7.0
-        version: 5.9.3
-
-  packages/llm:
-    dependencies:
-      '@anthropic-ai/sdk':
-        specifier: ^0.39.0
-        version: 0.39.0
-      '@fdg/types':
-        specifier: workspace:*
-        version: link:../types
-      openai:
-        specifier: ^4.80.0
-        version: 4.104.0(ws@8.20.0)
-    devDependencies:
-      tsup:
-        specifier: ^8.4.0
-        version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)
+      tsx:
+        specifier: ^4.19.2
+        version: 4.21.0
       typescript:
         specifier: ^5.7.0
         version: 5.9.3
@@ -120,15 +116,12 @@ importers:
       '@byteland/ink-scroll-bar':
         specifier: ^1.0.0
         version: 1.0.0(ink@6.8.0(@types/react@19.2.14)(react@19.2.5))(react@19.2.5)
-      '@fdg/db':
+      '@fdg/contracts':
         specifier: workspace:*
-        version: link:../db
-      '@fdg/engine':
+        version: link:../contracts
+      '@fdg/sdk':
         specifier: workspace:*
-        version: link:../engine
-      '@fdg/types':
-        specifier: workspace:*
-        version: link:../types
+        version: link:../sdk
       ink:
         specifier: ^6.8.0
         version: 6.8.0(@types/react@19.2.14)(react@19.2.5)
@@ -145,15 +138,6 @@ importers:
       '@types/react':
         specifier: ^19.2.14
         version: 19.2.14
-      tsup:
-        specifier: ^8.4.0
-        version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.7.0
-        version: 5.9.3
-
-  packages/types:
-    devDependencies:
       tsup:
         specifier: ^8.4.0
         version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)
