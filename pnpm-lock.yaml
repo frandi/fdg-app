@@ -124,6 +124,31 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
+  packages/sdk:
+    dependencies:
+      '@fdg/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@fdg/db':
+        specifier: workspace:*
+        version: link:../db
+      '@fdg/engine':
+        specifier: workspace:*
+        version: link:../engine
+      eventemitter3:
+        specifier: ^5.0.1
+        version: 5.0.4
+    devDependencies:
+      tsup:
+        specifier: ^8.4.0
+        version: 8.5.1(tsx@4.21.0)(typescript@5.9.3)
+      tsx:
+        specifier: ^4.19.2
+        version: 4.21.0
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+
   packages/tui:
     dependencies:
       '@byteland/ink-scroll-bar':
