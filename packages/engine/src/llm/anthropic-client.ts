@@ -1,11 +1,11 @@
 import Anthropic from '@anthropic-ai/sdk';
-import {
-  LlmProvider,
-  type LlmCallMetadata,
-  type StructuredRequest,
-  type StreamRequest,
-  type TextRequest,
-} from '@fdg/contracts';
+import { LlmProvider } from '@fdg/contracts';
+import type {
+  LlmCallMetadata,
+  StructuredRequest,
+  StreamRequest,
+  TextRequest,
+} from '../internal-types.js';
 import { BaseLlmClient } from './client.js';
 
 interface AnthropicUsage {

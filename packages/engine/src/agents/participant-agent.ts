@@ -1,9 +1,5 @@
-import type {
-  ParticipantDefinition,
-  LlmClientInterface,
-  Utterance,
-  Bid,
-} from '@fdg/contracts';
+import type { ParticipantDefinition, Utterance, Bid } from '@fdg/contracts';
+import type { LlmClientInterface } from '../internal-types.js';
 import {
   buildBidSystemPrompt,
   buildBidUserPrompt,

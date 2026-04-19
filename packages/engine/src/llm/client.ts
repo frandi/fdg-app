@@ -4,7 +4,7 @@ import type {
   StructuredRequest,
   StreamRequest,
   TextRequest,
-} from '@fdg/contracts';
+} from '../internal-types.js';
 
 export type { LlmClientInterface as LlmClient };
 

@@ -1,4 +1,29 @@
-import type { LlmCallMetadata, LlmUsageSink } from './llm-usage.js';
+import type { LlmProvider, LlmCallType } from '@fdg/contracts';
+
+export interface LlmCallMetadata {
+  actor: string;
+  callType: LlmCallType;
+}
+
+export interface LlmUsageRecord {
+  actor: string;
+  callType: LlmCallType;
+  provider: LlmProvider;
+  model: string;
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadTokens: number | null;
+  cacheCreationTokens: number | null;
+  timestampMs: number;
+}
+
+export interface LlmUsageRow extends LlmUsageRecord {
+  sessionId: string;
+  seq: number;
+  turnNumber: number | null;
+}
+
+export type LlmUsageSink = (record: LlmUsageRecord) => void;
 
 export interface StructuredRequest {
   systemPrompt: string;

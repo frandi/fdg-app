@@ -1,6 +1,5 @@
 import type {
   HostDefinition,
-  LlmClientInterface,
   Utterance,
   Bid,
   BidEvaluation,
@@ -8,6 +7,7 @@ import type {
   SessionSummary,
   CheckpointAction,
 } from '@fdg/contracts';
+import type { LlmClientInterface } from '../internal-types.js';
 import {
   buildHostOpeningSystemPrompt,
   buildHostOpeningUserPrompt,

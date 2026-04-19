@@ -1,7 +1,4 @@
-import type { SessionPhase } from './enums.js';
 import type { HostDefinition, ParticipantDefinition } from './agent.js';
-import type { Utterance } from './transcript.js';
-import type { Whisper } from './whisper.js';
 
 export interface SessionConfig {
   topic: string;
@@ -9,15 +6,6 @@ export interface SessionConfig {
   turnLimit: number;
   host: HostDefinition;
   participants: ParticipantDefinition[];
-}
-
-export interface SessionState {
-  id: string;
-  config: SessionConfig;
-  phase: SessionPhase;
-  currentTurn: number;
-  transcript: Utterance[];
-  pendingWhispers: Whisper[];
 }
 
 export interface SessionSummary {

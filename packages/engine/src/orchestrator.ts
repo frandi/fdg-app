@@ -3,11 +3,8 @@ import {
   UtteranceType,
   CheckpointAction,
 } from '@fdg/contracts';
-import type {
-  LlmClientInterface,
-  SessionConfig,
-  SessionSummary,
-} from '@fdg/contracts';
+import type { SessionConfig, SessionSummary } from '@fdg/contracts';
+import type { LlmClientInterface } from './internal-types.js';
 import { createLlmClient } from './llm/index.js';
 import type { Database } from './db/index.js';
 import { EngineEventBus } from './event-bus.js';

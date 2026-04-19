@@ -9,29 +9,6 @@ export type LlmCallType =
   | 'closing'
   | 'summary';
 
-export interface LlmCallMetadata {
-  actor: string;
-  callType: LlmCallType;
-}
-
-export interface LlmUsageRecord {
-  actor: string;
-  callType: LlmCallType;
-  provider: LlmProvider;
-  model: string;
-  inputTokens: number;
-  outputTokens: number;
-  cacheReadTokens: number | null;
-  cacheCreationTokens: number | null;
-  timestampMs: number;
-}
-
-export interface LlmUsageRow extends LlmUsageRecord {
-  sessionId: string;
-  seq: number;
-  turnNumber: number | null;
-}
-
 export interface UsageBucket {
   calls: number;
   inputTokens: number;
@@ -55,5 +32,3 @@ export interface SessionUsage {
   speakCount: number;
   speakAvgTokens: number;
 }
-
-export type LlmUsageSink = (record: LlmUsageRecord) => void;

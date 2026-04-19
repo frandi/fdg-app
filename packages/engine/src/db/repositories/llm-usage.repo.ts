@@ -2,10 +2,10 @@ import type BetterSqlite3 from 'better-sqlite3';
 import {
   LlmProvider,
   type LlmCallType,
-  type LlmUsageRow,
   type SessionUsage,
   type UsageBucket,
 } from '@fdg/contracts';
+import type { LlmUsageRow } from '../../internal-types.js';
 
 const CALL_TYPES: LlmCallType[] = [
   'opening',
